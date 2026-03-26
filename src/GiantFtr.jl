@@ -1,5 +1,5 @@
 module GiantFtr
 
-# Write your package code here.
+include("conexion_bbdd.jl")
 
 end

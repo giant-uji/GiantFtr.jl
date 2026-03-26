@@ -1,9 +1,17 @@
 name = "GiantFtr"
 uuid = "c942789f-b846-4624-9103-f1a1a20de65f"
-authors = ["GIANT group"]
 version = "1.0.0-DEV"
+authors = ["GIANT group"]
+
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+LibPQ = "194296ae-ab2e-5f79-8cd4-7183a0a5a0d1"
 
 [compat]
+DataFrames = "1.8.1"
+JSON = "1.4.0"
+LibPQ = "1.18.0"
 julia = "1.10.10"
 
 [extras]
