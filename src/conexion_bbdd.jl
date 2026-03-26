@@ -2,7 +2,7 @@ using LibPQ
 using JSON
 using DataFrames
 
-export get_ftr_hosp()
+export get_ftr_hosp
 
 function get_conexion(ruta_credenciales::String)
     credenciales_json = JSON.parsefile(ruta_credenciales);
