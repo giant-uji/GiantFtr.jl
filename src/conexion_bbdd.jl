@@ -20,9 +20,9 @@ function get_ftr_hosp(ruta_credenciales::String)
     return resultado
 end
 
-function get_table_bd(rutaCredenciales::String, tableName::String)
-    conexion = get_conexion(rutaCredenciales)
-    resultado = DataFrame(execute(conexion, "select * from " + tableName, not_null=false))
+function get_table_bd(ruta_credenciales::String, table_name::String)
+    conexion = get_conexion(ruta_credenciales)
+    resultado = DataFrame(execute(conexion, "select * from " + table_name, not_null=false))
     close(conexion)
     return resultado
 end
