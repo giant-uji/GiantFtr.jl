@@ -3,6 +3,7 @@ using JSON
 using DataFrames
 
 export get_ftr_hosp
+export get_ftr_hosp_valenf
 
 function get_conexion(ruta_credenciales::String)
     credenciales_json = JSON.parsefile(ruta_credenciales);
@@ -15,9 +16,12 @@ end
 
 function get_ftr_hosp(ruta_credenciales::String)
     conexion = get_conexion(ruta_credenciales)
-    resultado = DataFrame(execute(conexion, "select * from ftr_hosp", not_null=false))
+    resultado = DataFrame(execute(conexion, "select * from ftr_hosp", not_null = false))
     close(conexion)
     return resultado
 end
 
-
+function get_ftr_hosp_valenf(ruta_credenciales::String)
+    conexion = get_conexion(ruta_credenciales)
+    resultado = DataFrame(execute(conexion, "select * from ftr_hosp_valenf", not_null = false))
+end
