@@ -2,6 +2,8 @@ using DataFrames
 
 include("conexion_bbdd.jl")
 
+export hay_exitus_episodio
+
 function hay_exitus_episodio(tabla::DataFrame)::DataFrame
     resultado = DataFrame()
     # Se copia tal cual la columna de id_anonim_episodio
