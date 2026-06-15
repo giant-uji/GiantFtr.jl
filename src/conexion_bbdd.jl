@@ -35,3 +35,4 @@ function get_table_bd(table_name::String)
     close(conexion)
     return resultado
 end
+
