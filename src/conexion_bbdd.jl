@@ -24,7 +24,7 @@ end
 
 function get_table_bd(table_name::String)
     conexion = get_conexion()
-    resultado = DataFrame(execute(conexion, "select * from " + table_name, not_null=false))
+    resultado = DataFrame(execute(conexion, "select * from $table_name", not_null=false))
     close(conexion)
     return resultado
 end
