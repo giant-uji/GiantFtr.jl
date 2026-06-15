@@ -3,6 +3,7 @@ using DataFrames
 include("conexion_bbdd.jl")
 
 export categoria_barthel
+export hay_exitus_episodio
 
 function categoria_barthel(id_anonim_episodio::Int64, ruta_credenciales::String)::String
     resultado = "Dependencia leve"
