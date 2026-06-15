@@ -3,6 +3,7 @@ using DataFrames
 include("conexion_bbdd.jl")
 
 export categoria_barthel
+export hay_exitus_episodio
 
 const DEPENDENCIA_LEVE = 1
 const DEPENDENCIA_MODERADA = 2
