@@ -4,14 +4,18 @@ include("conexion_bbdd.jl")
 
 export categoria_barthel
 
-function categoria_barthel(id_anonim_episodio::Int64, ruta_credenciales::String)::String
-    resultado = "Dependencia leve"
-    df =  get_ftr_hosp_valenf(ruta_credenciales)
+const DEPENDENCIA_LEVE = 1
+const DEPENDENCIA_MODERADA = 2
+const DEPENDENCIA_SEVERA = 3
+
+function categoria_barthel(id_anonim_episodio::Int64)::Int64
+    resultado = DEPENDENCIA_LEVE
+    df =  get_ftr_hosp_valenf()
     valor_barthel = df[df.id_anonim_episodio .== id_anonim_episodio, :valor_barthel][1]
     if valor_barthel >= 0 && valor_barthel <= 34.101630
-        resultado = "Dependencia severa"
+        resultado = DEPENDENCIA_SEVERA
     elseif valor_barthel >= 34.101631 && valor_barthel <= 78.270630
-        resultado = "Dependencia moderada"
+        resultado = DEPENDENCIA_MODERADA
     end
 end
 

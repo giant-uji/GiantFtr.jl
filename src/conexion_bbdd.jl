@@ -17,15 +17,15 @@ function get_conexion()
     return LibPQ.Connection(credenciales);
 end
 
-function get_ftr_hosp(ruta_credenciales::String)
-    conexion = get_conexion(ruta_credenciales)
+function get_ftr_hosp()
+    conexion = get_conexion()
     resultado = DataFrame(execute(conexion, "select * from ftr_hosp", not_null = false))
     close(conexion)
     return resultado
 end
 
-function get_ftr_hosp_valenf(ruta_credenciales::String)
-    conexion = get_conexion(ruta_credenciales)
+function get_ftr_hosp_valenf()
+    conexion = get_conexion()
     resultado = DataFrame(execute(conexion, "select * from ftr_hosp_valenf", not_null = false))
 end
 
