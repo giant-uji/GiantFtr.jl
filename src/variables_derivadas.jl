@@ -2,7 +2,7 @@ using DataFrames
 
 include("conexion_bbdd.jl")
 
-export hay_exitus_episodio
+export hay_exitus_episodio, hay_exitus_paciente
 
 function hay_exitus_episodio(tabla::DataFrame)::DataFrame
     resultado = DataFrame()
@@ -13,7 +13,6 @@ function hay_exitus_episodio(tabla::DataFrame)::DataFrame
     return resultado
 end
 
-export hay_exitus_paciente
 
 function hay_exitus_paciente(df_ftr::DataFrame) :: DataFrame
 
