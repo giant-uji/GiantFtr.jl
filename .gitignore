@@ -1,3 +1,4 @@
 /Manifest*.toml
 src/credenciales.json
 .vscode
+db_local/
