@@ -18,6 +18,7 @@ function get_ftr_hosp_valenf()::DataFrame
     rename!(df_valenf, :valor_barthel => :valor_valenf_cf)
     rename!(df_valenf, :valor_downtown => :valor_valenf_rc)
 
+
     #3- Convertir tipos de columnas
 
     #Todas las fechas con el mismo formato

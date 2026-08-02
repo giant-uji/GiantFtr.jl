@@ -14,10 +14,10 @@ function get_table(table_name::String)::DataFrame
 
 
     if isfile(ruta_csv)
-        print("Tabla local: $table_name")
+        VERBOSE && println("Tabla local: $table_name")
         return CSV.read(ruta_csv, DataFrame)
     else
-        print("Tabla remota: $table_name")
+        VERBOSE && println("Tabla remota: $table_name")
         return get_table_bd(table_name)
     end
 end

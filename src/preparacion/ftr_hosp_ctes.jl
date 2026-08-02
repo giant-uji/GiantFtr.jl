@@ -12,7 +12,6 @@ function get_ftr_hosp_ctes()::DataFrame
 
     #1- Filtrado de columnas
     #2- Renombrado de columnas
-
     #3- Convertir tipos de columnas
 
     #Todas las fechas con el mismo formato
@@ -22,6 +21,7 @@ function get_ftr_hosp_ctes()::DataFrame
     #Tipos categoricos
     #Ayuda a optimizar cuando hay muchos tipos de datos
     transform!(df_ctes, :tipo_valor_pk .=> categorical, renamecols=false)
+
 
     #4- Transformaciones basicas necesarias
 
@@ -49,9 +49,9 @@ function eliminar_simultanedad_ctes!(df::DataFrame)::DataFrame
         n = nrow(group)
 
         if n > 1
-            #DEBUG: Si se descomenta tarda 3.5 veces mas
-            #group.count = 0:n-1        #DEBUG
-            #group.total .= n           #DEBUG
+            #Si se descomenta tarda 3.5 veces mas
+            #DEBUG && group.count = 0:n-1
+            #DEBUG && group.total .= n
 
             group.fecha_toma .+=
                 Millisecond.(round.(Int, (0:(n-1)) .* (60_000 / n)))
