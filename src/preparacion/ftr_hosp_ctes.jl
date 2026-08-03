@@ -1,13 +1,10 @@
-export get_ftr_hosp_ctes_RAW
-
-function get_ftr_hosp_ctes_RAW()::DataFrame
+function get_ftr_hosp_ctes_RAW(contexto::ContextoOpcional)::DataFrame
     return get_table("ftr_hosp_ctes")
 end
 
+export get_ftr_hosp_ctes_RAW
 
-export get_ftr_hosp_ctes
-
-function get_ftr_hosp_ctes()::DataFrame
+function get_ftr_hosp_ctes(contexto::ContextoOpcional)::DataFrame
     df_ctes = get_table("ftr_hosp_ctes")
 
     #1- Filtrado de columnas
@@ -30,6 +27,9 @@ function get_ftr_hosp_ctes()::DataFrame
 
     return df_ctes
 end
+
+export get_ftr_hosp_ctes
+registrar!(get_ftr_hosp_ctes;produce = :constantes)
 
 
 function eliminar_simultanedad_ctes!(df::DataFrame)::DataFrame

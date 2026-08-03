@@ -1,32 +1,31 @@
-export get_ftr_hosp_lab_DEFAULT
-
-function get_ftr_hosp_lab_DEFAULT()::DataFrame
+function get_ftr_hosp_lab_DEFAULT(contexto::ContextoOpcional)::DataFrame
     if ANALITICAS_CON_URGENCIAS
         VERBOSE && println("ftr_hosp_lab con URGENCIAS")
-        return get_ftr_hosp_lab_ALL()
+        return get_ftr_hosp_lab_ALL(contexto)
     end
 
-    return get_ftr_hosp_lab()
+    return get_ftr_hosp_lab(contexto)
 end
 
+export get_ftr_hosp_lab_DEFAULT
+registrar!(get_ftr_hosp_lab_DEFAULT;produce = :laboratorio)
+
+
+function get_ftr_hosp_lab_ALL(contexto::ContextoOpcional)::DataFrame
+    return append!(get_ftr_hosp_lab(contexto), get_ftr_hosp_lab_URG(contexto))
+end
 
 export get_ftr_hosp_lab_ALL
 
-function get_ftr_hosp_lab_ALL()::DataFrame
-    return append!(get_ftr_hosp_lab(), get_ftr_hosp_lab_URG())
-end
 
-
-export get_ftr_hosp_lab_RAW
-
-function get_ftr_hosp_lab_RAW()::DataFrame
+function get_ftr_hosp_lab_RAW(contexto::ContextoOpcional)::DataFrame
     return get_table("ftr_hosp_lab")
 end
 
+export get_ftr_hosp_lab_RAW
 
-export get_ftr_hosp_lab
 
-function get_ftr_hosp_lab()::DataFrame
+function get_ftr_hosp_lab(contexto::ContextoOpcional)::DataFrame
     df_lab = get_table("ftr_hosp_lab")
 
     #1- Filtrado de columnas
@@ -40,17 +39,17 @@ function get_ftr_hosp_lab()::DataFrame
     return df_lab
 end
 
+export get_ftr_hosp_lab
 
-export get_ftr_hosp_lab_URG_RAW
 
-function get_ftr_hosp_lab_URG_RAW()::DataFrame
+function get_ftr_hosp_lab_URG_RAW(contexto::ContextoOpcional)::DataFrame
     return get_table("ftr_hosp_lab_urg")
 end
 
+export get_ftr_hosp_lab_URG_RAW
 
-export get_ftr_hosp_lab_URG
 
-function get_ftr_hosp_lab_URG()::DataFrame
+function get_ftr_hosp_lab_URG(contexto::ContextoOpcional)::DataFrame
     df_lab = get_table("ftr_hosp_lab_urg")
 
     #0- URGENCIAS: transformar id_anonim_episodio_URG a id_anonim_episodio
@@ -74,3 +73,5 @@ function get_ftr_hosp_lab_URG()::DataFrame
 
     return df_lab
 end
+
+export get_ftr_hosp_lab_URG

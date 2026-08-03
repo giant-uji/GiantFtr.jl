@@ -1,13 +1,11 @@
-export get_ftr_hosp_interconsultas_RAW
-
-function get_ftr_hosp_interconsultas_RAW()::DataFrame
+function get_ftr_hosp_interconsultas_RAW(contexto::ContextoOpcional)::DataFrame
     return get_table("ftr_hosp_interconsultas")
 end
 
+export get_ftr_hosp_interconsultas_RAW
 
-export get_ftr_hosp_interconsultas
 
-function get_ftr_hosp_interconsultas()::DataFrame
+function get_ftr_hosp_interconsultas(contexto::ContextoOpcional)::DataFrame
     df_inter = get_table("ftr_hosp_interconsultas")
 
     #1- Filtrado de columnas
@@ -24,3 +22,6 @@ function get_ftr_hosp_interconsultas()::DataFrame
 
     return df_inter
 end
+
+export get_ftr_hosp_interconsultas
+registrar!(get_ftr_hosp_interconsultas;produce = :interconsultas)

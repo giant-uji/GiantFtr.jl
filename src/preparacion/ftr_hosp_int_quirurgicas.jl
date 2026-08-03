@@ -1,13 +1,11 @@
-export get_ftr_hosp_int_quirurgicas_RAW
-
-function get_ftr_hosp_int_quirurgicas_RAW()::DataFrame
+function get_ftr_hosp_int_quirurgicas_RAW(contexto::ContextoOpcional)::DataFrame
     return get_table("ftr_hosp_int_quirurgicas")
 end
 
+export get_ftr_hosp_int_quirurgicas_RAW
 
-export get_ftr_hosp_int_quirurgicas
 
-function get_ftr_hosp_int_quirurgicas()::DataFrame
+function get_ftr_hosp_int_quirurgicas(contexto::ContextoOpcional)::DataFrame
     df_qui = get_table("ftr_hosp_int_quirurgicas")
 
     #1- Filtrado de columnas
@@ -24,3 +22,6 @@ function get_ftr_hosp_int_quirurgicas()::DataFrame
 
     return df_qui
 end
+
+export get_ftr_hosp_int_quirurgicas
+registrar!(get_ftr_hosp_int_quirurgicas;produce = :intervenciones)

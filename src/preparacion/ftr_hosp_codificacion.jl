@@ -1,13 +1,11 @@
-export get_ftr_hosp_codificacion_RAW
-
-function get_ftr_hosp_codificacion_RAW()::DataFrame
+function get_ftr_hosp_codificacion_RAW(contexto::ContextoOpcional)::DataFrame
     return get_table("ftr_hosp_codificacion")
 end
 
+export get_ftr_hosp_codificacion_RAW
 
-export get_ftr_hosp_codificacion
 
-function get_ftr_hosp_codificacion()::DataFrame
+function get_ftr_hosp_codificacion(contexto::ContextoOpcional)::DataFrame
     df_cod = get_table("ftr_hosp_codificacion")
 
     #1- Filtrado de columnas
@@ -21,3 +19,6 @@ function get_ftr_hosp_codificacion()::DataFrame
 
     return df_cod
 end
+
+export get_ftr_hosp_codificacion
+registrar!(get_ftr_hosp_codificacion;produce = :codificacion)

@@ -8,8 +8,9 @@ using Base.Filesystem: isfile           #Comprobar si existe fichero
 using Dates: DateTime, Millisecond      #Columnas tipo Fecha
 using CategoricalArrays: categorical    #Columnas tipo Categorica (optimizacion)
 
-#DEBE SER el primer include
+#El orden de estos includes son importantes
 include("config.jl")
+include("DAG/dag.jl")
 
 include("utilidades/conexion_bbdd.jl")
 
