@@ -76,11 +76,38 @@ function ejecutar_funcion(dag::DAG, funcion::Function)
 
     nodo = REGISTRO[Symbol(nameof(funcion))]
 
+    #Almacena informacion sobre los DataFrame ANTES de ejecutar
+    if DEBUG && !isnothing(nodo.usa)
+        estado = [
+            (
+                nrow(dag.contexto[tabla]),
+                names(dag.contexto[tabla])
+            )
+            for tabla in nodo.usa
+        ]
+    end
+
     if isnothing(nodo.usa)
         resultado = nodo.funcion()
     else
         parametros = [dag.contexto[x] for x in nodo.usa]
         resultado = nodo.funcion(parametros...)
+    end
+
+    #Comprueba que los DataFrame NO se han modificado al ejecutar
+    if DEBUG && !isnothing(nodo.usa)
+        for (i, tabla) in enumerate(nodo.usa)
+
+            filas, columnas = estado[i]
+
+            if nrow(dag.contexto[tabla]) != filas
+                error("La función $(nameof(funcion)) ha modificado el número de filas de $(tabla)")
+            end
+
+            if names(dag.contexto[tabla]) != columnas
+                error("La función $(nameof(funcion)) ha modificado las columnas de $(tabla)")
+            end
+        end
     end
 
     if !isnothing(nodo.produce)
