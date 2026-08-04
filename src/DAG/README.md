@@ -131,3 +131,4 @@ Si posteriormente otra variable también depende de `get_ftr_hosp`, esta no volv
 * No deben haber ciclos de dependencias se debe generar un DAG (existe validación en DEBUG)
 * El orden de las tablas utilizadas como entrada (`usa`) debe ser el mismo que el de los parámetros de la función registrada
 * Las funciones indicadas en `dependencias` deben generar o completar toda la información necesaria para las tablas indicadas en `usa`
+* Las funciones registradas **no deben modificar los `DataFrame`** recibidos como entrada.

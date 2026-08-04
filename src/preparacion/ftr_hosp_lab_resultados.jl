@@ -29,8 +29,7 @@ function get_ftr_hosp_lab_resultados(df_lab::DataFrame)::DataFrame
     df_lab_resultados = get_table("ftr_hosp_lab_resultados")
 
     #0- Añadir id_anonim_episodio
-    select!(df_lab, [:id_anonim_episodio, :id_solicitud])
-    df_lab_resultados = leftjoin(df_lab_resultados, df_lab, on=:id_solicitud)
+    df_lab_resultados = leftjoin(df_lab_resultados, select(df_lab, [:id_anonim_episodio, :id_solicitud], copycols=false), on=:id_solicitud)
 
     #Reordenamos columnas
     select!(df_lab_resultados, [:id, :id_solicitud, :id_anonim_episodio, :fecha_resultados, :fecha_validacion, :parametro_pk, :valor_parametro])
@@ -64,12 +63,10 @@ function get_ftr_hosp_lab_URG_resultados(df_lab::DataFrame)::DataFrame
     df_lab_resultados = get_table("ftr_hosp_lab_urg_resultados")
 
     #0- Añadir id_anonim_episodio
-    select!(df_lab, [:id_anonim_episodio, :id_solicitud])
-
     #id_solicitud_urg -> id_solicitud: Consistencia con ftr_hosp_lab_resultados
     rename!(df_lab_resultados, :id_solicitud_urg => :id_solicitud)
 
-    df_lab_resultados = leftjoin(df_lab_resultados, df_lab, on=:id_solicitud)
+    df_lab_resultados = leftjoin(df_lab_resultados, select(df_lab, [:id_anonim_episodio, :id_solicitud], copycols=false), on=:id_solicitud)
 
     #Reordenamos columnas
     select!(df_lab_resultados, [:id, :id_solicitud, :id_anonim_episodio, :fecha_resultados, :fecha_validacion, :parametro_pk, :valor_parametro])
