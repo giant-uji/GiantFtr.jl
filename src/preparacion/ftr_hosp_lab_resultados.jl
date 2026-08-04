@@ -1,35 +1,34 @@
-function get_ftr_hosp_lab_resultados_DEFAULT(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp_lab_resultados_DEFAULT(df_lab::DataFrame)::DataFrame
     if ANALITICAS_CON_URGENCIAS
         VERBOSE && println("get_ftr_hosp_lab_resultados con URGENCIAS")
-        return get_ftr_hosp_lab_resultados_ALL(contexto)
+        return get_ftr_hosp_lab_resultados_ALL(df_lab)
     end
 
-    return get_ftr_hosp_lab_resultados(contexto)
+    return get_ftr_hosp_lab_resultados(df_lab)
 end
 
 export get_ftr_hosp_lab_resultados_DEFAULT
-registrar!(get_ftr_hosp_lab_resultados_DEFAULT;produce = :lab_resultados)
+registrar!(get_ftr_hosp_lab_resultados_DEFAULT;dependencias=[get_ftr_hosp_lab_DEFAULT], usa= [LABORATORIO],produce = LAB_RESULTADOS)
 
 
-function get_ftr_hosp_lab_resultados_ALL(contexto::ContextoOpcional)::DataFrame
-    return append!(get_ftr_hosp_lab_resultados(contexto), get_ftr_hosp_lab_URG_resultados(contexto))
+function get_ftr_hosp_lab_resultados_ALL(df_lab::DataFrame)::DataFrame
+    return append!(get_ftr_hosp_lab_resultados(df_lab), get_ftr_hosp_lab_URG_resultados(df_lab))
 end
 
 export get_ftr_hosp_lab_resultados_ALL
 
 
-function get_ftr_hosp_lab_resultados_RAW(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp_lab_resultados_RAW()::DataFrame
     return get_table("ftr_hosp_lab_resultados")
 end
 
 export get_ftr_hosp_lab_resultados_RAW
 
 
-function get_ftr_hosp_lab_resultados(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp_lab_resultados(df_lab::DataFrame)::DataFrame
     df_lab_resultados = get_table("ftr_hosp_lab_resultados")
 
     #0- Añadir id_anonim_episodio
-    df_lab = get_table("ftr_hosp_lab")
     select!(df_lab, [:id_anonim_episodio, :id_solicitud])
     df_lab_resultados = leftjoin(df_lab_resultados, df_lab, on=:id_solicitud)
 
@@ -54,18 +53,17 @@ end
 export get_ftr_hosp_lab_resultados
 
 
-function get_ftr_hosp_lab_URG_resultados_RAW(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp_lab_URG_resultados_RAW()::DataFrame
     return get_table("ftr_hosp_lab_urg_resultados")
 end
 
 export get_ftr_hosp_lab_URG_resultados_RAW
 
 
-function get_ftr_hosp_lab_URG_resultados(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp_lab_URG_resultados(df_lab::DataFrame)::DataFrame
     df_lab_resultados = get_table("ftr_hosp_lab_urg_resultados")
 
     #0- Añadir id_anonim_episodio
-    df_lab = get_ftr_hosp_lab_URG(contexto) #Necesita transformar urgencias
     select!(df_lab, [:id_anonim_episodio, :id_solicitud])
 
     #id_solicitud_urg -> id_solicitud: Consistencia con ftr_hosp_lab_resultados

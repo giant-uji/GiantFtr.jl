@@ -1,62 +1,9 @@
-#Para la definicion de las funciones
-const Contexto = Dict{Symbol,DataFrame}
-const ContextoOpcional = Union{Nothing,Contexto}    #Permite no pasar contexto
-
-#Nodo tiene que estar ANTES de REGISTRO
-struct Nodo
-    funcion::Function           #Funcion que se registra
-    dependencias::Vector{Function}  #Listado de funciones de las que se depende
-    produce::Union{Nothing,Symbol}  #La salida es un dataframe
-    extiende::Union{Nothing,Tuple{Symbol,Symbol}}   #(dataframe, PK) La salida extiende un dataframe left join PK
-end
-
-#Constante donde se resgistran TODAS las funciones y dependencias
-const REGISTRO = Dict{Symbol,Nodo}()
-
-
-export registrar!
-
-function registrar!(
-    funcion::Function;
-    dependencias::Vector{Function}=Function[],
-    produce::Union{Nothing,Symbol}=nothing,
-    extiende::Union{Nothing,Tuple{Symbol,Symbol}}=nothing)
-
-    nombre = Symbol(nameof(funcion))
-
-    if isnothing(produce) && isnothing(extiende)
-        println("Falta la salida de $nombre, no registrada")
-        return
-    end
-
-    if !isnothing(produce) && !isnothing(extiende)
-        println("La función $nombre produce y extiende, no registrada")
-        return
-    end
-
-    if haskey(REGISTRO, nombre)
-        println("Ya se ha registrado la función $nombre, no registrada")
-        return
-    end
-
-    REGISTRO[nombre] = Nodo(
-        funcion,
-        copy(dependencias),
-        produce,
-        extiende
-    )
-
-    #Si no se pone esto Julia devuelve el resultado de lo ultimo ejecutado
-    return
-end
-
-
 export DAG
 
 #Directed Acyclic Graph (Grafo dirigido acíclico)
 #Es un motor de ejecucion de funciones que tiene en cuenta las dependencias
 mutable struct DAG
-    contexto::Dict{Symbol,DataFrame}
+    contexto::Dict{Tabla,DataFrame}
     ejecutadas::Set{Function}
 
     function DAG()
@@ -66,7 +13,7 @@ mutable struct DAG
         end
 
         new(
-            Dict{Symbol,DataFrame}(),
+            Dict{Tabla,DataFrame}(),
             Set{Function}()
         )
     end
@@ -87,8 +34,8 @@ end
 #Llamada con lista de funciones
 function ejecutar!(dag::DAG, funciones::AbstractVector{<:Function})
 
-    empty!(dag.contexto)
-    empty!(dag.ejecutadas)
+    VACIAR_DAG_ANTES_EJECUTAR && empty!(dag.contexto)
+    VACIAR_DAG_ANTES_EJECUTAR && empty!(dag.ejecutadas)
 
     for f in funciones
         VERBOSE && println("Intenta ejecutar: $(nameof(f))")
@@ -102,7 +49,7 @@ end
 #Funcion recursiva que se encarga de resolver las dependencias
 function resolver!(dag::DAG, funcion::Function)
 
-    if funcion in dag.ejecutadas
+    if funcion in dag.ejecutadas    #MEMOIZATION
         VERBOSE && println("Cache: $(nameof(funcion))")
         return
     end
@@ -116,8 +63,25 @@ function resolver!(dag::DAG, funcion::Function)
     end
 
     #Ejecuta la funcion
-    resultado = nodo.funcion(dag.contexto)
+    ejecutar_funcion(dag, funcion)
+    push!(dag.ejecutadas, funcion)
+
+    #Si no se pone esto Julia devuelve el resultado de lo ultimo ejecutado
+    return
+end
+
+#Se encarga de ejecutar la funcion gestionando todo el contexto
+function ejecutar_funcion(dag::DAG, funcion::Function)
     VERBOSE && println("Ejecutando: $(nameof(funcion))")
+
+    nodo = REGISTRO[Symbol(nameof(funcion))]
+
+    if isnothing(nodo.usa)
+        resultado = nodo.funcion()
+    else
+        parametros = [dag.contexto[x] for x in nodo.usa]
+        resultado = nodo.funcion(parametros...)
+    end
 
     if !isnothing(nodo.produce)
         dag.contexto[nodo.produce] = resultado
@@ -129,18 +93,15 @@ function resolver!(dag::DAG, funcion::Function)
             resultado;
             on=pk
         )
-
     end
-
-    push!(dag.ejecutadas, funcion)
-
+    
     #Si no se pone esto Julia devuelve el resultado de lo ultimo ejecutado
     return
 end
 
-#Funcion para TESTING detecta cilos de dependencias entre funciones
+#Funcion para TESTING detecta ciclos de dependencias entre funciones
 #Codigo implementado por IA
-#Es un algoritmo de busqueda de bucles en grafos dirigidos utilizando busqueda en profundidad desde cada nodo
+#Es un algoritmo de busqueda de ciclos en grafos dirigidos utilizando busqueda en profundidad desde cada nodo
 function detectar_ciclos!()
     VERBOSE && println("Detectando ciclos...")
 
@@ -192,6 +153,10 @@ function detectar_ciclos!(
     end
 
     nodo = REGISTRO[nombre]
+
+    for dep in nodo.dependencias
+        detectar_ciclos!(dep, visitadas, visitando, camino)
+    end
 
     pop!(camino)
     delete!(visitando, funcion)

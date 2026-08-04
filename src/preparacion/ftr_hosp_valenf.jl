@@ -1,11 +1,11 @@
-function get_ftr_hosp_valenf_RAW(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp_valenf_RAW()::DataFrame
     return get_table("ftr_hosp_valenf")
 end
 
 export get_ftr_hosp_valenf_RAW
 
 
-function get_ftr_hosp_valenf(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp_valenf()::DataFrame
     df_valenf = get_table("ftr_hosp_valenf")
 
     #1- Filtrado de columnas
@@ -37,7 +37,7 @@ function get_ftr_hosp_valenf(contexto::ContextoOpcional)::DataFrame
 end
 
 export get_ftr_hosp_valenf
-registrar!(get_ftr_hosp_valenf;produce = :valenf)
+registrar!(get_ftr_hosp_valenf;produce = VALENF)
 
 
 function mapear_respuestas_valenf!(df::DataFrame)::DataFrame

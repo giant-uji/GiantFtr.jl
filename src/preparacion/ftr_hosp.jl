@@ -1,11 +1,11 @@
-function get_ftr_hosp_RAW(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp_RAW()::DataFrame
     return get_table("ftr_hosp")
 end
 
 export get_ftr_hosp_RAW
 
 
-function get_ftr_hosp(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp()::DataFrame
     df_ftr = get_table("ftr_hosp")
 
     #1- Filtrado de columnas
@@ -35,4 +35,4 @@ function get_ftr_hosp(contexto::ContextoOpcional)::DataFrame
 end
 
 export get_ftr_hosp
-registrar!(get_ftr_hosp;produce = :episodios)
+registrar!(get_ftr_hosp;produce = EPISODIOS)

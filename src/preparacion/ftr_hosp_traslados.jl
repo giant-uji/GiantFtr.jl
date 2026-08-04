@@ -1,11 +1,11 @@
-function get_ftr_hosp_traslados_RAW(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp_traslados_RAW()::DataFrame
     return get_table("ftr_hosp_traslados")
 end
 
 export get_ftr_hosp_traslados_RAW
 
 
-function get_ftr_hosp_traslados(contexto::ContextoOpcional)::DataFrame
+function get_ftr_hosp_traslados()::DataFrame
     df_tras = get_table("ftr_hosp_traslados")
 
     #1- Filtrado de columnas
@@ -24,4 +24,4 @@ function get_ftr_hosp_traslados(contexto::ContextoOpcional)::DataFrame
 end
 
 export get_ftr_hosp_traslados
-registrar!(get_ftr_hosp_traslados;produce = :traslados)
+registrar!(get_ftr_hosp_traslados;produce = TRASLADOS)

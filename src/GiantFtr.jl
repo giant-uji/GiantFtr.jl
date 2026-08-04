@@ -10,6 +10,8 @@ using CategoricalArrays: categorical    #Columnas tipo Categorica (optimizacion)
 
 #El orden de estos includes son importantes
 include("config.jl")
+include("DAG/tabla.jl")
+include("DAG/registro.jl")
 include("DAG/dag.jl")
 
 include("utilidades/conexion_bbdd.jl")
