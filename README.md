@@ -5,8 +5,8 @@
 ## Estructura del proyecto
 
 ```text
+assets/
 src/
-├── assets/
 ├── DAG/
 ├── preparacion/
 ├── utilidades/
@@ -21,10 +21,6 @@ src/
 ```
 
 ## Organización
-
-### `assets/`
-
-Contiene archivos auxiliares necesarios para calcular algunas variables derivadas. Por ejemplo, tablas de correspondencia entre códigos CIE y su capítulo o sección.
 
 
 ### `DAG/`
