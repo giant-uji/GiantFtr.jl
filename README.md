@@ -10,14 +10,17 @@ src/
 ├── DAG/
 ├── preparacion/
 ├── utilidades/
-└── variables/
-    ├── ftr_hosp/
-    │   ├── basica.jl
-    │   └── agregacion.jl
-    ├── ...
-    └── compuestas/
-        ├── motivo_valenf.jl
-        └── reingresos.jl
+├── variables/
+│   ├── ftr_hosp/
+│   │   ├── basica.jl
+│   │   └── agregacion.jl
+│   ├── ...
+│   └── compuestas/
+│       ├── motivo_valenf.jl
+│       └── reingresos.jl
+├── config.jl          # Configuración del proyecto
+├── constantes.jl      # Constantes y códigos del dominio
+└── GiantFtr.jl        # Módulo principal del proyecto
 ```
 
 ## Organización
