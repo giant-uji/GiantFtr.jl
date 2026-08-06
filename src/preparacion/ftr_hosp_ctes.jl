@@ -15,12 +15,17 @@ function get_ftr_hosp_ctes()::DataFrame
     #Por defecto las cargaba como String
     transform!(df_ctes, :fecha_toma .=> ByRow(x -> ismissing(x) ? missing : DateTime(x)), renamecols=false)
 
+    #4- Transformaciones basicas necesarias
+    #Se agrupan todos los tipos de GLUCEMIAS (GLUCEMIAS, GLUCEMIAS_COMIDA GLUCEMIAS_CENA)
+    replace!(
+    df_ctes.tipo_valor_pk,
+    22 => GLUCEMIAS,
+    23 => GLUCEMIAS,)
+
+    #Se ha movido a despues de transformar las GLUCEMIAS para que no le afecte
     #Tipos categoricos
     #Ayuda a optimizar cuando hay muchos tipos de datos
     transform!(df_ctes, :tipo_valor_pk .=> categorical, renamecols=false)
-
-
-    #4- Transformaciones basicas necesarias
 
     #Se elimina la simultanedad usando ID
     eliminar_simultanedad_ctes!(df_ctes)
