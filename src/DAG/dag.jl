@@ -77,7 +77,7 @@ function ejecutar_funcion(dag::DAG, funcion::Function)
     nodo = REGISTRO[Symbol(nameof(funcion))]
 
     #Almacena informacion sobre los DataFrame ANTES de ejecutar
-    if DEBUG && !isnothing(nodo.usa) && isnothing(nodo.anyade)
+    if DEBUG && !isnothing(nodo.usa)
         estado = [
             (
                 nrow(dag.contexto[tabla]),
@@ -95,7 +95,7 @@ function ejecutar_funcion(dag::DAG, funcion::Function)
     end
 
     #Comprueba que los DataFrame NO se han modificado al ejecutar
-    if DEBUG && !isnothing(nodo.usa) && isnothing(nodo.anyade)
+    if DEBUG && !isnothing(nodo.usa)
         for (i, tabla) in enumerate(nodo.usa)
 
             filas, columnas = estado[i]
