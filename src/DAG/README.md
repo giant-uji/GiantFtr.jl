@@ -61,6 +61,19 @@ registrar!(
 )
 ```
 
+Una función que **añade** filas a un `DataFrame` existente:
+
+```julia
+function nueva_constante(constantes::DataFrame)::DataFrame
+    ...
+end
+
+registrar!(
+    nueva_constante;         #Función que se registra
+    anyade = CONSTANTES      #Valor del enum Tabla
+)
+```
+
 ---
 
 # Ejecutar el DAG

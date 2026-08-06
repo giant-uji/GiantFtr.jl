@@ -77,7 +77,7 @@ function ejecutar_funcion(dag::DAG, funcion::Function)
     nodo = REGISTRO[Symbol(nameof(funcion))]
 
     #Almacena informacion sobre los DataFrame ANTES de ejecutar
-    if DEBUG && !isnothing(nodo.usa)
+    if DEBUG && !isnothing(nodo.usa) && isnothing(nodo.anyade)
         estado = [
             (
                 nrow(dag.contexto[tabla]),
@@ -95,7 +95,7 @@ function ejecutar_funcion(dag::DAG, funcion::Function)
     end
 
     #Comprueba que los DataFrame NO se han modificado al ejecutar
-    if DEBUG && !isnothing(nodo.usa)
+    if DEBUG && !isnothing(nodo.usa) && isnothing(nodo.anyade)
         for (i, tabla) in enumerate(nodo.usa)
 
             filas, columnas = estado[i]
@@ -112,13 +112,18 @@ function ejecutar_funcion(dag::DAG, funcion::Function)
 
     if !isnothing(nodo.produce)
         dag.contexto[nodo.produce] = resultado
-    else
+    elseif !isnothing(nodo.extiende)
         tabla, pk = nodo.extiende
 
         leftjoin!(
             dag.contexto[tabla],
             resultado;
             on=pk
+        )
+    else    #Anyade
+        append!(
+        dag.contexto[nodo.anyade],
+        resultado
         )
     end
     
