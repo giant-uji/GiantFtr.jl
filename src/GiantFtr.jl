@@ -5,7 +5,7 @@ using LibPQ                             #Acceder a DB
 using JSON                              #Leer fichero de credenciales
 using CSV                               #Cargar fichero CSV
 using Base.Filesystem: isfile           #Comprobar si existe fichero
-using Dates: DateTime, Millisecond      #Columnas tipo Fecha
+using Dates                             #Columnas tipo Fecha
 using CategoricalArrays: categorical    #Columnas tipo Categorica (optimizacion)
 
 #El orden de estos includes son importantes
@@ -27,5 +27,8 @@ include("preparacion/ftr_hosp_traslados.jl")
 include("preparacion/ftr_hosp_ctes.jl")
 include("preparacion/ftr_hosp_lab.jl")
 include("preparacion/ftr_hosp_lab_resultados.jl")
+
+#VARIABLES
+include("variables/ftr_hosp_ctes/basica.jl")
 
 end
