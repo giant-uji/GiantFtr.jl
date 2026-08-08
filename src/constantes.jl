@@ -1,3 +1,4 @@
+# CONSTANTES
 const GLUCEMIAS = 2
 const TA_SISTOLICA = 3
 const TA_DISTOLICA = 4
@@ -5,11 +6,19 @@ const FRECUENCIA_CARDIACA = 5
 const SATO2 = 6
 const DIURESIS = 7
 const TEMPERATURA = 8
-const DIURESIS24H = -1  #Al ser una variable derivada se ha definido en NEGATIVO para evitar colisiones futuras
 
-export GLUCEMIAS, TA_SISTOLICA, TA_DISTOLICA, FRECUENCIA_CARDIACA, SATO2, DIURESIS, TEMPERATURA, DIURESIS24H
+export GLUCEMIAS, TA_SISTOLICA, TA_DISTOLICA, FRECUENCIA_CARDIACA, SATO2, DIURESIS, TEMPERATURA
 
 
+#Variables derivadas de CONSTANTES
+#Se definen en NEGATIVO para evitar colisiones futuras
+const DIURESIS24H = -1  
+const SHOCK_INDEX = -2
+
+export DIURESIS24H, SHOCK_INDEX
+
+
+# LAB_RESULTADOS
 const PCR_PROTEINA_C_REACTIVA = 1
 const PROCALCITONINA = 2
 const TP_TIEMPO_PROTROMBINA = 3

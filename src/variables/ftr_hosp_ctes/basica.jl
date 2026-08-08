@@ -1,4 +1,4 @@
-function diuresis24h(df_ctes::DataFrame)
+function diuresis24h(df_ctes::DataFrame)::DataFrame
 
     #Filtramos diuresis
     df_diuresis = filter(:tipo_valor_pk => ==(DIURESIS), df_ctes)
@@ -33,3 +33,51 @@ end
 
 export diuresis24h
 registrar!(diuresis24h;dependencias=[get_ftr_hosp_ctes], usa= [CONSTANTES],anyade = CONSTANTES)
+
+
+function shock_index(df_ctes::DataFrame)::DataFrame
+
+    #Fitramos las variables de FC y TAS que son las que usamos
+    df_FC_TAS = filter(
+        row -> row.tipo_valor_pk in [FRECUENCIA_CARDIACA, TA_SISTOLICA],
+        df_ctes
+    )
+
+    #Generamos la estructura del DataFrame de salida
+    df_resultado = DataFrame(
+        id = Int64[],
+        id_anonim_episodio = Int64[],
+        tipo_valor_pk = Int64[],
+        valor_campo = Float64[],
+        fecha_toma = DateTime[]
+    )
+
+    #Agrupamos por episodio y toma
+    df_agrupado = groupby(df_FC_TAS, [:id_anonim_episodio, :fecha_toma])
+
+
+    for grupo in df_agrupado
+        # Obtenemos FC y TAS en el mismo instante
+        fc = filter(row -> row.tipo_valor_pk == FRECUENCIA_CARDIACA, grupo)
+        tas = filter(row -> row.tipo_valor_pk == TA_SISTOLICA, grupo)
+
+        #Calculamos si existen AMBAS
+        if !isempty(fc) && !isempty(tas)
+
+            valor = Float64(fc.valor_campo[1]) / Float64(tas.valor_campo[1])
+
+            push!(df_resultado, (
+                get_ctes_id(grupo.fecha_toma[1],SHOCK_INDEX, grupo.id_anonim_episodio[1]),
+                grupo.id_anonim_episodio[1],
+                SHOCK_INDEX,
+                valor,
+                grupo.fecha_toma[1]
+            ))
+        end
+    end
+
+    return df_resultado
+end
+
+export shock_index
+registrar!(shock_index;dependencias = [get_ftr_hosp_ctes], usa = [CONSTANTES], anyade = CONSTANTES)
