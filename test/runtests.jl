@@ -78,28 +78,12 @@ end
 
 @testset "ta_media" begin
 
-    df = DataFrame(
-        id = Int64[1, 2, 3, 4],
-        id_anonim_episodio = Int64[100, 100, 100, 100],
-        tipo_valor_pk = Int64[
-            TA_SISTOLICA,
-            TA_DISTOLICA,
-            FRECUENCIA_CARDIACA,
-            TA_DISTOLICA
-        ],
-        valor_campo = Float64[
-            120,
-            80,
-            200,
-            99
-        ],
-        fecha_toma = DateTime[
-            DateTime(2025, 1, 10, 10),
-            DateTime(2025, 1, 10, 10),
-            DateTime(2025, 1, 10, 11),
-            DateTime(2025, 1, 10, 11)
-        ]
-    )
+    df = DataFrame([
+    (1, 100, TA_SISTOLICA, 120.0, DateTime(2025, 1, 10, 10)),
+    (2, 100, TA_DISTOLICA, 80.0, DateTime(2025, 1, 10, 10)),
+    (3, 100, FRECUENCIA_CARDIACA, 200.0, DateTime(2025, 1, 10, 11)),
+    (4, 100, TA_DISTOLICA, 99.0, DateTime(2025, 1, 10, 11)) ],
+    [ :id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma ])
 
     resultado = ta_media(df)
 
