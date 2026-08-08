@@ -1,18 +1,18 @@
-function get_ftr_hosp_lab_resultados_DEFAULT(df_lab::DataFrame)::DataFrame
+function get_ftr_hosp_lab_resultados(df_lab::DataFrame)::DataFrame
     if ANALITICAS_CON_URGENCIAS
         VERBOSE && println("get_ftr_hosp_lab_resultados con URGENCIAS")
         return get_ftr_hosp_lab_resultados_ALL(df_lab)
     end
 
-    return get_ftr_hosp_lab_resultados(df_lab)
+    return get_ftr_hosp_lab_resultados_HOSP(df_lab)
 end
 
-export get_ftr_hosp_lab_resultados_DEFAULT
-registrar!(get_ftr_hosp_lab_resultados_DEFAULT;dependencias = [get_ftr_hosp_lab_DEFAULT], usa = [LABORATORIO], produce = LAB_RESULTADOS)
+export get_ftr_hosp_lab_resultados
+registrar!(get_ftr_hosp_lab_resultados;dependencias = [get_ftr_hosp_lab], usa = [LABORATORIO], produce = LAB_RESULTADOS)
 
 
 function get_ftr_hosp_lab_resultados_ALL(df_lab::DataFrame)::DataFrame
-    return append!(get_ftr_hosp_lab_resultados(df_lab), get_ftr_hosp_lab_URG_resultados(df_lab))
+    return append!(get_ftr_hosp_lab_resultados_HOSP(df_lab), get_ftr_hosp_lab_URG_resultados(df_lab))
 end
 
 export get_ftr_hosp_lab_resultados_ALL
@@ -25,7 +25,7 @@ end
 export get_ftr_hosp_lab_resultados_RAW
 
 
-function get_ftr_hosp_lab_resultados(df_lab::DataFrame)::DataFrame
+function get_ftr_hosp_lab_resultados_HOSP(df_lab::DataFrame)::DataFrame
     df_lab_resultados = get_table("ftr_hosp_lab_resultados")
 
     #0- Añadir id_anonim_episodio
@@ -49,7 +49,7 @@ function get_ftr_hosp_lab_resultados(df_lab::DataFrame)::DataFrame
     return df_lab_resultados
 end
 
-export get_ftr_hosp_lab_resultados
+export get_ftr_hosp_lab_resultados_HOSP
 
 
 function get_ftr_hosp_lab_URG_resultados_RAW()::DataFrame

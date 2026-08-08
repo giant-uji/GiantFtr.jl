@@ -1,18 +1,18 @@
-function get_ftr_hosp_lab_DEFAULT()::DataFrame
+function get_ftr_hosp_lab()::DataFrame
     if ANALITICAS_CON_URGENCIAS
         VERBOSE && println("ftr_hosp_lab con URGENCIAS")
         return get_ftr_hosp_lab_ALL()
     end
 
-    return get_ftr_hosp_lab()
+    return get_ftr_hosp_lab_HOSP()
 end
 
-export get_ftr_hosp_lab_DEFAULT
-registrar!(get_ftr_hosp_lab_DEFAULT;produce = LABORATORIO)
+export get_ftr_hosp_lab
+registrar!(get_ftr_hosp_lab;produce = LABORATORIO)
 
 
 function get_ftr_hosp_lab_ALL()::DataFrame
-    return append!(get_ftr_hosp_lab(), get_ftr_hosp_lab_URG())
+    return append!(get_ftr_hosp_lab_HOSP(), get_ftr_hosp_lab_URG())
 end
 
 export get_ftr_hosp_lab_ALL
@@ -25,7 +25,7 @@ end
 export get_ftr_hosp_lab_RAW
 
 
-function get_ftr_hosp_lab()::DataFrame
+function get_ftr_hosp_lab_HOSP()::DataFrame
     df_lab = get_table("ftr_hosp_lab")
 
     #1- Filtrado de columnas
@@ -39,7 +39,7 @@ function get_ftr_hosp_lab()::DataFrame
     return df_lab
 end
 
-export get_ftr_hosp_lab
+export get_ftr_hosp_lab_HOSP
 
 
 function get_ftr_hosp_lab_URG_RAW()::DataFrame
