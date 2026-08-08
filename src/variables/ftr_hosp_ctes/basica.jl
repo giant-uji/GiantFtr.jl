@@ -18,7 +18,10 @@ function diuresis24h(df_ctes::DataFrame)
 
     #Camos DataFrame de resultado
     df_resultado = DataFrame(
-        id = -collect(1:nrow(df_agrupado)),     #ID negativa para evitar colisiones con DB
+        id = [
+                get_ctes_id(r.fecha_toma,DIURESIS24H, r.id_anonim_episodio)
+                for r in eachrow(df_agrupado)
+            ], # ID negativo determinista
         id_anonim_episodio = df_agrupado.id_anonim_episodio,
         tipo_valor_pk = fill(DIURESIS24H, nrow(df_agrupado)),
         valor_campo = df_agrupado.valor_campo,

@@ -15,6 +15,8 @@ include("DAG/tabla.jl")
 include("DAG/registro.jl")
 include("DAG/dag.jl")
 
+#UTILIDADES (funciones comunes)
+include("utilidades/generador_id.jl")
 include("utilidades/conexion_bbdd.jl")
 
 #PREPARACION (carga datos, tipo columnas y limpieza)
