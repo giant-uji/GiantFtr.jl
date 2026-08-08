@@ -32,7 +32,7 @@ function diuresis24h(df_ctes::DataFrame)::DataFrame
 end
 
 export diuresis24h
-registrar!(diuresis24h;dependencias=[get_ftr_hosp_ctes], usa= [CONSTANTES],anyade = CONSTANTES)
+registrar!(diuresis24h;dependencias = [get_ftr_hosp_ctes], usa = [CONSTANTES], anyade = CONSTANTES)
 
 
 function shock_index(df_ctes::DataFrame)::DataFrame

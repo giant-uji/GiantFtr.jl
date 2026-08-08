@@ -8,7 +8,7 @@ function get_ftr_hosp_lab_resultados_DEFAULT(df_lab::DataFrame)::DataFrame
 end
 
 export get_ftr_hosp_lab_resultados_DEFAULT
-registrar!(get_ftr_hosp_lab_resultados_DEFAULT;dependencias=[get_ftr_hosp_lab_DEFAULT], usa= [LABORATORIO],produce = LAB_RESULTADOS)
+registrar!(get_ftr_hosp_lab_resultados_DEFAULT;dependencias = [get_ftr_hosp_lab_DEFAULT], usa = [LABORATORIO], produce = LAB_RESULTADOS)
 
 
 function get_ftr_hosp_lab_resultados_ALL(df_lab::DataFrame)::DataFrame
