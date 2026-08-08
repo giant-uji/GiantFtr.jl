@@ -12,25 +12,13 @@ using .GiantFtr
 
 @testset "diuresis24h" begin
 
-    df = DataFrame(
-        id = Int64[1, 2, 3, 4, 5],
-        id_anonim_episodio = Int64[100, 100, 100, 100, 100],
-        tipo_valor_pk = Int64[
-            DIURESIS,
-            DIURESIS,
-            DIURESIS,
-            FRECUENCIA_CARDIACA,
-            DIURESIS
-        ],
-        valor_campo = Float64[500, 300, 200, 80, 100],
-        fecha_toma = DateTime[
-            DateTime(2025, 1, 10, 7, 30),   #Dia 9 por ser < 8
-            DateTime(2025, 1, 10, 9, 0),    #Dia 10
-            DateTime(2025, 1, 10, 15, 0),   #Dia 10
-            DateTime(2025, 1, 10, 12, 0),   #Dia 10 #IGNORADO POR SER FC
-            DateTime(2025, 1, 11, 8, 0)     #Dia 11 por ser >=8
-        ]
-    )
+    df = DataFrame([
+    (1, 100, DIURESIS,             500.0, DateTime(2025, 1, 10, 7, 30)),    #Dia 9 por ser <8h
+    (2, 100, DIURESIS,             300.0, DateTime(2025, 1, 10, 9, 0)),     #Dia 10
+    (3, 100, DIURESIS,             200.0, DateTime(2025, 1, 10, 15, 0)),    #Dia 10
+    (4, 100, FRECUENCIA_CARDIACA,   80.0, DateTime(2025, 1, 10, 12, 0)),    #IGNORAR por ser FC
+    (5, 100, DIURESIS,             100.0, DateTime(2025, 1, 11, 8, 0))],    #Dia 11 por ser >=8h
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
 
     resultado = diuresis24h(df)
 
@@ -58,35 +46,13 @@ end
 
 @testset "shock_index" begin
 
-    df = DataFrame(
-        id = Int64[1, 2, 3, 4, 5],
-        id_anonim_episodio = Int64[
-            100, 100,
-            100, 100,
-            100
-        ],
-        tipo_valor_pk = Int64[
-            FRECUENCIA_CARDIACA,
-            TA_SISTOLICA,
-            FRECUENCIA_CARDIACA,
-            TA_SISTOLICA,
-            FRECUENCIA_CARDIACA
-        ],
-        valor_campo = Float64[
-            90, 120,      # 90 / 120 = 0.75
-            100, 100,     # 100 / 100 = 1.0
-            80            # Sin TAS -> no resultado
-        ],
-        fecha_toma = DateTime[
-            DateTime(2025, 1, 10, 10),
-            DateTime(2025, 1, 10, 10),
-
-            DateTime(2025, 1, 10, 12),
-            DateTime(2025, 1, 10, 12),
-
-            DateTime(2025, 1, 10, 14)
-        ]
-    )
+    df = DataFrame([ 
+    (1, 100, FRECUENCIA_CARDIACA, 90.0, DateTime(2025, 1, 10, 10)), 
+    (2, 100, TA_SISTOLICA, 120.0, DateTime(2025, 1, 10, 10)),
+    (3, 100, FRECUENCIA_CARDIACA, 100.0, DateTime(2025, 1, 10, 12)),
+    (4, 100, TA_SISTOLICA, 100.0, DateTime(2025, 1, 10, 12)),
+    (5, 100, FRECUENCIA_CARDIACA, 80.0, DateTime(2025, 1, 10, 14)) ],
+    [ :id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma ])
 
     resultado = shock_index(df)
 
