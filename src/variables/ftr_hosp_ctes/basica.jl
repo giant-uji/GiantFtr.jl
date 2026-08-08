@@ -64,10 +64,10 @@ function shock_index(df_ctes::DataFrame)::DataFrame
         #Calculamos si existen AMBAS
         if !isempty(fc) && !isempty(tas)
 
-            valor = Float64(fc.valor_campo[1]) / Float64(tas.valor_campo[1])
+            valor = fc.valor_campo[1] / tas.valor_campo[1]
 
             push!(df_resultado, (
-                get_ctes_id(grupo.fecha_toma[1],SHOCK_INDEX, grupo.id_anonim_episodio[1]),
+                get_ctes_id(grupo.fecha_toma[1], SHOCK_INDEX, grupo.id_anonim_episodio[1]),
                 grupo.id_anonim_episodio[1],
                 SHOCK_INDEX,
                 valor,
@@ -81,3 +81,51 @@ end
 
 export shock_index
 registrar!(shock_index;dependencias = [get_ftr_hosp_ctes], usa = [CONSTANTES], anyade = CONSTANTES)
+
+
+function ta_media(df_ctes::DataFrame)::DataFrame
+
+    #Fitramos las variables de TAS y TAD que son las que usamos
+    df_TAS_TAD = filter(
+        row -> row.tipo_valor_pk in [TA_SISTOLICA, TA_DISTOLICA],
+        df_ctes
+    )
+
+    #Generamos la estructura del DataFrame de salida
+    df_resultado = DataFrame(
+        id = Int64[],
+        id_anonim_episodio = Int64[],
+        tipo_valor_pk = Int64[],
+        valor_campo = Float64[],
+        fecha_toma = DateTime[]
+    )
+
+    #Agrupamos por episodio y toma
+    df_agrupado = groupby(df_TAS_TAD, [:id_anonim_episodio, :fecha_toma])
+
+
+    for grupo in df_agrupado
+        # Obtenemos TAS y TAD en el mismo instante
+        tas = filter(row -> row.tipo_valor_pk == TA_SISTOLICA, grupo)
+        tad = filter(row -> row.tipo_valor_pk == TA_DISTOLICA, grupo)
+
+        #Calculamos si existen AMBAS
+        if !isempty(tas) && !isempty(tad)
+
+            valor = (tas.valor_campo[1] + 2 * tad.valor_campo[1]) / 3
+
+            push!(df_resultado, (
+                get_ctes_id(grupo.fecha_toma[1], TA_MEDIA, grupo.id_anonim_episodio[1]),
+                grupo.id_anonim_episodio[1],
+                TA_MEDIA,
+                valor,
+                grupo.fecha_toma[1]
+            ))
+        end
+    end
+
+    return df_resultado
+end
+
+export ta_media
+registrar!(ta_media;dependencias = [get_ftr_hosp_ctes], usa = [CONSTANTES], anyade = CONSTANTES)
