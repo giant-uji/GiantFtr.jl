@@ -12,88 +12,214 @@ using .GiantFtr
 
 @testset "diuresis24h" begin
 
-    df = DataFrame([
-    (1, 100, DIURESIS,             500.0, DateTime(2025, 1, 10, 7, 30)),    #Dia 9 por ser <8h
-    (2, 100, DIURESIS,             300.0, DateTime(2025, 1, 10, 9, 0)),     #Dia 10
-    (3, 100, DIURESIS,             200.0, DateTime(2025, 1, 10, 15, 0)),    #Dia 10
-    (4, 100, FRECUENCIA_CARDIACA,   80.0, DateTime(2025, 1, 10, 12, 0)),    #IGNORAR por ser FC
-    (5, 100, DIURESIS,             100.0, DateTime(2025, 1, 11, 8, 0))],    #Dia 11 por ser >=8h
+    #PRUEBA BASICA
+    df_entrada = DataFrame([
+    (1, 100, DIURESIS,              100.0,  DateTime(2026, 9, 7, 8, 30)),
+    (2, 100, DIURESIS,              200.0,  DateTime(2026, 9, 7, 18, 57)),
+    (3, 100, DIURESIS,              300.0,  DateTime(2026, 9, 7, 23, 50))],
     [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
 
-    resultado = diuresis24h(df)
+    resultado = GiantFtr.diuresis24h(df_entrada)
 
-    #Se esperan 3: dia 9, dia 10 y dia 11
-    @test nrow(resultado) == 3
+    #Si se usa condicion && condicion NO MUESTRA EL ERROR
+    @test resultado.id_anonim_episodio == [100]
+    @test resultado.valor_campo == [600] 
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 23, 50)]
 
-    #El DataFrame generado solo tiene DIURESIS24H
-    @test all(resultado.tipo_valor_pk .== DIURESIS24H)
+    #PRUEBA CON DATOS QUE NO SON DIURESIS
+    df_entrada = DataFrame([
+    (1, 100, DIURESIS,             100.0,   DateTime(2026, 9, 7, 8, 30)),
+    (2, 100, DIURESIS,             200.0,   DateTime(2026, 9, 7, 18, 57)),
+    (3, 100, FRECUENCIA_CARDIACA,  300.0,   DateTime(2026, 9, 7, 23, 50))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
 
-    #Se espera los siguientes resultados:
-    #Dia 9: 500
-    #Dia 10: 300+200 = 500
-    #Dia 11: 100
-    #El orden viene dado por fecha_toma
-    @test resultado.valor_campo == [500.0, 500.0, 100.0]
+    resultado = GiantFtr.diuresis24h(df_entrada)
 
-    #La fecha debe ser igual a la fecha de la ultima diuresis
-    @test sort(resultado.fecha_toma) == [
-        DateTime(2025, 1, 10, 7, 30),
-        DateTime(2025, 1, 10, 15, 0),
-        DateTime(2025, 1, 11, 8, 0)
-    ]
+    @test resultado.id_anonim_episodio == [100]
+    @test resultado.valor_campo == [300]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 18, 57)]
+
+
+    #PRUEBA CON DOS EPISODIOS
+    df_entrada = DataFrame([
+    (1, 100, DIURESIS,              100.0,  DateTime(2026, 9, 7, 8, 30)),
+    (2, 100, DIURESIS,              200.0,  DateTime(2026, 9, 7, 18, 57)),
+    (3, 100, DIURESIS,              300.0,  DateTime(2026, 9, 7, 23, 50)),
+    (4, 999, DIURESIS,              800.0,  DateTime(2026, 9, 8, 12, 00))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
+
+    resultado = GiantFtr.diuresis24h(df_entrada)
+
+    @test resultado.id_anonim_episodio == [100, 999]
+    @test resultado.valor_campo == [600, 800]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 23, 50), DateTime(2026, 9, 8, 12, 00)]
+
+
+   #PRUEBA CON DOS DIAS
+    df_entrada = DataFrame([
+    (1, 100, DIURESIS,              100.0,  DateTime(2026, 9, 7, 8, 30)),
+    (2, 100, DIURESIS,              200.0,  DateTime(2026, 9, 7, 18, 57)),
+    (3, 100, DIURESIS,              450.0,  DateTime(2026, 9, 8, 12, 00))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
+
+    resultado = GiantFtr.diuresis24h(df_entrada)
+
+    @test resultado.id_anonim_episodio == [100, 100]
+    @test resultado.valor_campo == [300, 450]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 18, 57), DateTime(2026, 9, 8, 12, 00)]
+
+    #PRUEBA EN DIA CLINICO (cambia a las 8:00)
+    df_entrada = DataFrame([
+    (1, 100, DIURESIS,              100.0,  DateTime(2026, 9, 7, 10, 30)),
+    (2, 100, DIURESIS,              200.0,  DateTime(2026, 9, 8, 7, 59)),
+    (3, 100, DIURESIS,              450.0,  DateTime(2026, 9, 8, 8, 00))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
+
+    resultado = GiantFtr.diuresis24h(df_entrada)
+
+    @test resultado.id_anonim_episodio == [100, 100]
+    @test resultado.valor_campo == [300, 450]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 8, 7, 59), DateTime(2026, 9, 8, 8, 00)]
 end
 
 
 @testset "shock_index" begin
 
-    df = DataFrame([ 
-    (1, 100, FRECUENCIA_CARDIACA, 90.0, DateTime(2025, 1, 10, 10)), 
-    (2, 100, TA_SISTOLICA, 120.0, DateTime(2025, 1, 10, 10)),
-    (3, 100, FRECUENCIA_CARDIACA, 100.0, DateTime(2025, 1, 10, 12)),
-    (4, 100, TA_SISTOLICA, 100.0, DateTime(2025, 1, 10, 12)),
-    (5, 100, FRECUENCIA_CARDIACA, 80.0, DateTime(2025, 1, 10, 14)) ],
-    [ :id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma ])
+    #PRUEBA BASICA CON DOS ENTRADAS
+    df_entrada = DataFrame([
+    (1, 100, FRECUENCIA_CARDIACA,   90.0,   DateTime(2026, 9, 7, 10, 30)), 
+    (2, 100, TA_SISTOLICA,          120.0,  DateTime(2026, 9, 7, 10, 30)),
+    (3, 100, FRECUENCIA_CARDIACA,   100.0,  DateTime(2026, 9, 7, 10, 31)),
+    (4, 100, TA_SISTOLICA,          100.0,  DateTime(2026, 9, 7, 10, 31))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
 
-    resultado = shock_index(df)
+    resultado = GiantFtr.shock_index(df_entrada)
 
-    #Se esperan 2: 0.75 y 1.0
-    @test nrow(resultado) == 2
+    @test resultado.id_anonim_episodio == [100, 100]
+    @test resultado.valor_campo ≈ [0.75, 1]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 10, 30), DateTime(2026, 9, 7, 10, 31)]
 
-    #El DataFrame generado solo tiene SHOCK_INDEX
-    @test all(resultado.tipo_valor_pk .== SHOCK_INDEX)
+    #PRUEBA CON FC SIN TAS
+    df_entrada = DataFrame([
+    (1, 100, FRECUENCIA_CARDIACA,   90.0,   DateTime(2026, 9, 7, 10, 30)), 
+    (2, 100, TA_SISTOLICA,          120.0,  DateTime(2026, 9, 7, 10, 30)),
+    (3, 100, FRECUENCIA_CARDIACA,   100.0,  DateTime(2026, 9, 7, 10, 31))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
 
+    resultado = GiantFtr.shock_index(df_entrada)
 
-    #Se espera los siguientes resultados:
-    # 90 / 120 = 0.75
-    # 100 / 100 = 1.0
-    #El orden viene dado por fecha_toma
-    @test resultado.valor_campo ≈ [0.75, 1.0]
+    @test resultado.id_anonim_episodio == [100]
+    @test resultado.valor_campo ≈ [0.75]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 10, 30)]
 
-    @test sort(resultado.fecha_toma) == [
-        DateTime(2025, 1, 10, 10),
-        DateTime(2025, 1, 10, 12)
-    ]
+    #PRUEBA CON TAS SIN FC
+    df_entrada = DataFrame([
+    (1, 100, FRECUENCIA_CARDIACA,   90.0,   DateTime(2026, 9, 7, 10, 30)), 
+    (2, 100, TA_SISTOLICA,          120.0,  DateTime(2026, 9, 7, 10, 30)),
+    (3, 100, TA_SISTOLICA,          100.0,  DateTime(2026, 9, 7, 10, 31))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
+
+    resultado = GiantFtr.shock_index(df_entrada)
+
+    @test resultado.id_anonim_episodio == [100]
+    @test resultado.valor_campo ≈ [0.75]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 10, 30)]
+
+    #PRUEBA BASICA CON DOS EPISODIOS
+    df_entrada = DataFrame([
+    (1, 100, FRECUENCIA_CARDIACA,   90.0,   DateTime(2026, 9, 7, 10, 30)), 
+    (2, 100, TA_SISTOLICA,          120.0,  DateTime(2026, 9, 7, 10, 30)),
+    (3, 200, FRECUENCIA_CARDIACA,   100.0,  DateTime(2026, 9, 7, 10, 31)),
+    (4, 200, TA_SISTOLICA,          100.0,  DateTime(2026, 9, 7, 10, 31))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
+
+    resultado = GiantFtr.shock_index(df_entrada)
+
+    @test resultado.id_anonim_episodio == [100, 200]
+    @test resultado.valor_campo ≈ [0.75, 1]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 10, 30), DateTime(2026, 9, 7, 10, 31)]
+
+    #PRUEBA SIN PAREJAS FC TAS EN EL MISMO EPISODIO
+    df_entrada = DataFrame([
+    (1, 100, FRECUENCIA_CARDIACA,   90.0,   DateTime(2026, 9, 7, 10, 30)), 
+    (2, 200, TA_SISTOLICA,          120.0,  DateTime(2026, 9, 7, 10, 30)),
+    (3, 100, FRECUENCIA_CARDIACA,   100.0,  DateTime(2026, 9, 7, 10, 31)),
+    (4, 200, TA_SISTOLICA,          100.0,  DateTime(2026, 9, 7, 10, 31))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
+
+    resultado = GiantFtr.shock_index(df_entrada)
+
+    @test nrow(resultado) == 0
+
 end
 
 
 @testset "ta_media" begin
 
-    df = DataFrame([
-    (1, 100, TA_SISTOLICA, 120.0, DateTime(2025, 1, 10, 10)),
-    (2, 100, TA_DISTOLICA, 80.0, DateTime(2025, 1, 10, 10)),
-    (3, 100, FRECUENCIA_CARDIACA, 200.0, DateTime(2025, 1, 10, 11)),
-    (4, 100, TA_DISTOLICA, 99.0, DateTime(2025, 1, 10, 11)) ],
-    [ :id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma ])
+    #PRUEBA BASICA CON DOS ENTRADAS
+    df_entrada = DataFrame([
+    (1, 100, TA_SISTOLICA,          120.0,  DateTime(2026, 9, 7, 10, 30)), 
+    (2, 100, TA_DISTOLICA,          90.0,   DateTime(2026, 9, 7, 10, 30)),
+    (3, 100, TA_SISTOLICA,          100.0,  DateTime(2026, 9, 7, 10, 31)),
+    (4, 100, TA_DISTOLICA,          90.0,  DateTime(2026, 9, 7, 10, 31))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
 
-    resultado = ta_media(df)
+    resultado = GiantFtr.ta_media(df_entrada)
 
-    #Deberia dar un unico resultado
-    #Como hay un TAD sin pareja NO calcula 2
-    @test nrow(resultado) == 1
+    @test resultado.id_anonim_episodio == [100, 100]
+    @test resultado.valor_campo ≈ [100, 93.33333333333333]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 10, 30), DateTime(2026, 9, 7, 10, 31)]
 
-    #El DataFrame generado solo tiene TA_MEDIA
-    @test all(resultado.tipo_valor_pk .== TA_MEDIA)
+    #PRUEBA CON TAS SIN TAD
+    df_entrada = DataFrame([
+    (1, 100, TA_SISTOLICA,          120.0,  DateTime(2026, 9, 7, 10, 30)), 
+    (2, 100, TA_DISTOLICA,          90.0, DateTime(2026, 9, 7, 10, 30)),
+    (3, 100, TA_SISTOLICA,          110.0, DateTime(2026, 9, 7, 10, 31))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
 
-    # (120 + 2* 80)/3 = 93.33...
-    @test resultado.valor_campo[1] ≈ 93.33333333333333
+    resultado = GiantFtr.ta_media(df_entrada)
+
+    @test resultado.id_anonim_episodio == [100]
+    @test resultado.valor_campo ≈ [100]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 10, 30)]
+
+    #PRUEBA CON TAD SIN TAS
+    df_entrada = DataFrame([
+    (1, 100, TA_SISTOLICA,          120.0,  DateTime(2026, 9, 7, 10, 30)), 
+    (2, 100, TA_DISTOLICA,          90.0, DateTime(2026, 9, 7, 10, 30)),
+    (3, 100, TA_DISTOLICA,          100.0, DateTime(2026, 9, 7, 10, 31))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
+
+    resultado = GiantFtr.ta_media(df_entrada)
+
+    @test resultado.id_anonim_episodio == [100]
+    @test resultado.valor_campo ≈ [100]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 10, 30)]
+
+    #PRUEBA BASICA CON DOS EPISODIOS
+    df_entrada = DataFrame([
+    (1, 100, TA_SISTOLICA,          120.0,  DateTime(2026, 9, 7, 10, 30)), 
+    (2, 100, TA_DISTOLICA,          90.0, DateTime(2026, 9, 7, 10, 30)),
+    (3, 200, TA_SISTOLICA,          100.0, DateTime(2026, 9, 7, 10, 31)),
+    (4, 200, TA_DISTOLICA,          90.0, DateTime(2026, 9, 7, 10, 31))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
+
+    resultado = GiantFtr.ta_media(df_entrada)
+
+    @test resultado.id_anonim_episodio == [100, 200]
+    @test resultado.valor_campo ≈ [100, 93.33333333333333]
+    @test resultado.fecha_toma == [DateTime(2026, 9, 7, 10, 30), DateTime(2026, 9, 7, 10, 31)]
+
+    #PRUEBA SIN PAREJAS FC TAS EN EL MISMO EPISODIO
+    df_entrada = DataFrame([
+    (1, 100, TA_SISTOLICA,          120.0,  DateTime(2026, 9, 7, 10, 30)), 
+    (2, 200, TA_DISTOLICA,          90.0, DateTime(2026, 9, 7, 10, 30)),
+    (3, 100, TA_SISTOLICA,          100.0, DateTime(2026, 9, 7, 10, 31)),
+    (4, 200, TA_DISTOLICA,          90.0, DateTime(2026, 9, 7, 10, 31))],
+    [:id, :id_anonim_episodio, :tipo_valor_pk, :valor_campo, :fecha_toma])
+
+    resultado = GiantFtr.ta_media(df_entrada)
+
+    @test nrow(resultado) == 0
+
 end
