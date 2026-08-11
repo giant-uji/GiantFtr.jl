@@ -223,3 +223,188 @@ end
     @test nrow(resultado) == 0
 
 end
+
+#Test generados con Claude Sonnet 5 esfuerzo medio
+@testset "m_shock_index" begin
+
+    @testset "DataFrame de entrada vacío" begin
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[],
+            tipo_valor_pk = Int64[],
+            valor_campo = Float64[],
+            fecha_toma = DateTime[]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        @test nrow(df_out) == 0
+        @test names(df_out) == ["id", "id_anonim_episodio", "tipo_valor_pk", "valor_campo", "fecha_toma"]
+        @test eltype(df_out.id) == Int64
+        @test eltype(df_out.id_anonim_episodio) == Int64
+        @test eltype(df_out.tipo_valor_pk) == Int64
+        @test eltype(df_out.valor_campo) == Float64
+        @test eltype(df_out.fecha_toma) == DateTime
+    end
+
+    @testset "FC y TAM presentes en el mismo instante -> calcula shock index" begin
+        fecha = DateTime(2024, 1, 1, 10, 0, 0)
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[1, 1],
+            tipo_valor_pk = Int64[FRECUENCIA_CARDIACA, TA_MEDIA],
+            valor_campo = Float64[90.0, 60.0],
+            fecha_toma = DateTime[fecha, fecha]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        @test nrow(df_out) == 1
+        @test df_out.id_anonim_episodio[1] == 1
+        @test df_out.tipo_valor_pk[1] == M_SHOCK_INDEX
+        @test df_out.valor_campo[1] ≈ 90.0 / 60.0
+        @test df_out.fecha_toma[1] == fecha
+
+        id_esperado = GiantFtr.get_ctes_id(fecha, M_SHOCK_INDEX, 1)
+        @test df_out.id[1] == id_esperado
+    end
+
+    @testset "Solo FC, sin TAM en el mismo instante -> no genera fila" begin
+        fecha = DateTime(2024, 1, 1, 10, 0, 0)
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[1],
+            tipo_valor_pk = Int64[FRECUENCIA_CARDIACA],
+            valor_campo = Float64[90.0],
+            fecha_toma = DateTime[fecha]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        @test nrow(df_out) == 0
+    end
+
+    @testset "Solo TAM, sin FC en el mismo instante -> no genera fila" begin
+        fecha = DateTime(2024, 1, 1, 10, 0, 0)
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[1],
+            tipo_valor_pk = Int64[TA_MEDIA],
+            valor_campo = Float64[60.0],
+            fecha_toma = DateTime[fecha]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        @test nrow(df_out) == 0
+    end
+
+    @testset "FC y TAM en instantes distintos -> no se emparejan" begin
+        fecha1 = DateTime(2024, 1, 1, 10, 0, 0)
+        fecha2 = DateTime(2024, 1, 1, 11, 0, 0)
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[1, 1],
+            tipo_valor_pk = Int64[FRECUENCIA_CARDIACA, TA_MEDIA],
+            valor_campo = Float64[90.0, 60.0],
+            fecha_toma = DateTime[fecha1, fecha2]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        @test nrow(df_out) == 0
+    end
+
+    @testset "Otros tipos de constante distintos de FC/TAM se ignoran" begin
+        fecha = DateTime(2024, 1, 1, 10, 0, 0)
+        otro_tipo = 999  # cualquier tipo_valor_pk que no sea FC ni TAM
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[1, 1, 1],
+            tipo_valor_pk = Int64[FRECUENCIA_CARDIACA, TA_MEDIA, otro_tipo],
+            valor_campo = Float64[90.0, 60.0, 36.5],
+            fecha_toma = DateTime[fecha, fecha, fecha]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        @test nrow(df_out) == 1
+        @test df_out.valor_campo[1] ≈ 90.0 / 60.0
+    end
+
+    @testset "Múltiples instantes para el mismo episodio -> una fila por instante válido" begin
+        fecha1 = DateTime(2024, 1, 1, 10, 0, 0)
+        fecha2 = DateTime(2024, 1, 1, 12, 0, 0)
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[1, 1, 1, 1],
+            tipo_valor_pk = Int64[FRECUENCIA_CARDIACA, TA_MEDIA, FRECUENCIA_CARDIACA, TA_MEDIA],
+            valor_campo = Float64[90.0, 60.0, 100.0, 50.0],
+            fecha_toma = DateTime[fecha1, fecha1, fecha2, fecha2]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        @test nrow(df_out) == 2
+        sort!(df_out, :fecha_toma)
+        @test df_out.fecha_toma == [fecha1, fecha2]
+        @test df_out.valor_campo[1] ≈ 90.0 / 60.0
+        @test df_out.valor_campo[2] ≈ 100.0 / 50.0
+    end
+
+    @testset "Múltiples episodios -> se calculan de forma independiente" begin
+        fecha = DateTime(2024, 1, 1, 10, 0, 0)
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[1, 1, 2, 2],
+            tipo_valor_pk = Int64[FRECUENCIA_CARDIACA, TA_MEDIA, FRECUENCIA_CARDIACA, TA_MEDIA],
+            valor_campo = Float64[80.0, 80.0, 120.0, 40.0],
+            fecha_toma = DateTime[fecha, fecha, fecha, fecha]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        @test nrow(df_out) == 2
+        sort!(df_out, :id_anonim_episodio)
+        @test df_out.id_anonim_episodio == [1, 2]
+        @test df_out.valor_campo[1] ≈ 80.0 / 80.0
+        @test df_out.valor_campo[2] ≈ 120.0 / 40.0
+    end
+
+    @testset "Mismo instante, distintos episodios con una sola medición cada uno" begin
+        # Verifica que el agrupado por (id_anonim_episodio, fecha_toma) no mezcla episodios
+        fecha = DateTime(2024, 1, 1, 10, 0, 0)
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[1, 2],
+            tipo_valor_pk = Int64[FRECUENCIA_CARDIACA, TA_MEDIA],
+            valor_campo = Float64[90.0, 60.0],
+            fecha_toma = DateTime[fecha, fecha]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        # Ningún episodio tiene ambas mediciones -> no debe generarse ninguna fila
+        @test nrow(df_out) == 0
+    end
+
+    @testset "Valor de shock index calculado correctamente (división FC/TAM, no al revés)" begin
+        fecha = DateTime(2024, 1, 1, 10, 0, 0)
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[1, 1],
+            tipo_valor_pk = Int64[FRECUENCIA_CARDIACA, TA_MEDIA],
+            valor_campo = Float64[100.0, 25.0],
+            fecha_toma = DateTime[fecha, fecha]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        @test df_out.valor_campo[1] ≈ 4.0  # 100/25, no 25/100
+    end
+
+    @testset "El resultado solo contiene filas de tipo M_SHOCK_INDEX" begin
+        fecha = DateTime(2024, 1, 1, 10, 0, 0)
+        df_in = DataFrame(
+            id_anonim_episodio = Int64[1, 1],
+            tipo_valor_pk = Int64[FRECUENCIA_CARDIACA, TA_MEDIA],
+            valor_campo = Float64[90.0, 60.0],
+            fecha_toma = DateTime[fecha, fecha]
+        )
+
+        df_out = GiantFtr.m_shock_index(df_in)
+
+        @test all(df_out.tipo_valor_pk .== M_SHOCK_INDEX)
+    end
+
+end
