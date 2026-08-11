@@ -129,3 +129,51 @@ end
 
 export ta_media
 registrar!(ta_media;dependencias = [get_ftr_hosp_ctes], usa = [CONSTANTES], anyade = CONSTANTES)
+
+
+function m_shock_index(df_ctes::DataFrame)::DataFrame
+
+    #Fitramos las variables de FC y TAM que son las que usamos
+    df_FC_TAM = filter(
+        row -> row.tipo_valor_pk in [FRECUENCIA_CARDIACA, TA_MEDIA],
+        df_ctes
+    )
+
+    #Generamos la estructura del DataFrame de salida
+    df_resultado = DataFrame(
+        id = Int64[],
+        id_anonim_episodio = Int64[],
+        tipo_valor_pk = Int64[],
+        valor_campo = Float64[],
+        fecha_toma = DateTime[]
+    )
+
+    #Agrupamos por episodio y toma
+    df_agrupado = groupby(df_FC_TAM, [:id_anonim_episodio, :fecha_toma])
+
+
+    for grupo in df_agrupado
+        # Obtenemos FC y TAM en el mismo instante
+        fc = filter(row -> row.tipo_valor_pk == FRECUENCIA_CARDIACA, grupo)
+        tam = filter(row -> row.tipo_valor_pk == TA_MEDIA, grupo)
+
+        #Calculamos si existen AMBAS
+        if !isempty(fc) && !isempty(tam)
+
+            valor = fc.valor_campo[1] / tam.valor_campo[1]
+
+            push!(df_resultado, (
+                get_ctes_id(grupo.fecha_toma[1], M_SHOCK_INDEX, grupo.id_anonim_episodio[1]),
+                grupo.id_anonim_episodio[1],
+                M_SHOCK_INDEX,
+                valor,
+                grupo.fecha_toma[1]
+            ))
+        end
+    end
+
+    return df_resultado
+end
+
+export m_shock_index
+registrar!(m_shock_index;dependencias = [get_ftr_hosp_ctes, ta_media], usa = [CONSTANTES], anyade = CONSTANTES)

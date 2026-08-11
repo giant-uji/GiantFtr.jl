@@ -58,7 +58,7 @@ function resolver!(dag::DAG, funcion::Function)
 
     #Resolver dependencias de forma RECURSIVA
     for dep in nodo.dependencias
-        VERBOSE && println("Dependencia: $(nameof(funcion))")
+        VERBOSE && println("Dependencia de $(nameof(funcion)): $(nameof(dep))")
         resolver!(dag, dep)
     end
 
