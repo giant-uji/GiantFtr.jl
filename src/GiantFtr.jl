@@ -16,8 +16,8 @@ include("DAG/registro.jl")
 include("DAG/dag.jl")
 
 #UTILIDADES (funciones comunes)
-include("utilidades/generador_id.jl")
 include("utilidades/conexion_bbdd.jl")
+
 
 #PREPARACION (carga datos, tipo columnas y limpieza)
 include("preparacion/ftr_hosp.jl")
@@ -31,6 +31,7 @@ include("preparacion/ftr_hosp_lab.jl")
 include("preparacion/ftr_hosp_lab_resultados.jl")
 
 #VARIABLES
+include("variables/ftr_hosp_ctes/generador_id.jl")
 include("variables/ftr_hosp_ctes/basica.jl")
 
 end

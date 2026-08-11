@@ -49,6 +49,7 @@ Permite que todo el proyecto trabaje con tablas homogéneas limpias y con el mis
 ### `utilidades/`
 
 Centraliza funciones comunes a todo el proyecto para evitar duplicar código.
+Las funciones comunes a parte del proyecto se deben incluir en la carpeta de esa parte.
 
 
 ### `variables/`
