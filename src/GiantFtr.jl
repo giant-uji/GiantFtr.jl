@@ -31,7 +31,12 @@ include("preparacion/ftr_hosp_lab.jl")
 include("preparacion/ftr_hosp_lab_resultados.jl")
 
 #VARIABLES
+include("variables/utilidades.jl")  #Utilidades comunes de variables
+
+#Constantes
 include("variables/ftr_hosp_ctes/generador_id.jl")
 include("variables/ftr_hosp_ctes/basica.jl")
+include("variables/ftr_hosp_ctes/agregacion.jl")
+
 
 end
