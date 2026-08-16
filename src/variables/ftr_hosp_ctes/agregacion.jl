@@ -12,17 +12,17 @@ function agrupar_FC(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
             rangos_anomalos = Tuple{Float64,Float64}[(-Inf, 50),(100, Inf)]) #Rango de valores anomalos
 
     df_result = select(df_result, :id_anonim_episodio,
-        :fc_existe_valor,
+        #:fc_existe_valor,
         :fc_recuento,
         :fc_primero,
-        :fc_ultimo,
+        #:fc_ultimo,
         :fc_minimo,
         :fc_maximo,
         :fc_any_alterada,
-        :fc_recuento_alterada,
+        #:fc_recuento_alterada,
         :fc_prop_alterada,
-        :fc_delta_descenso,
-        :fc_delta_aumento
+        #:fc_delta_descenso,
+        #:fc_delta_aumento
     )
     
     return df_result
@@ -50,17 +50,17 @@ function agrupar_TAS(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
             rangos_anomalos = Tuple{Float64,Float64}[(-Inf, 90),(120, Inf)]) #Rango de valores anomalos
 
     df_result = select(df_result, :id_anonim_episodio,
-        :tas_existe_valor,
+        #:tas_existe_valor,
         :tas_recuento,
         :tas_primero,
-        :tas_ultimo,
+        #:tas_ultimo,
         :tas_minimo,
-        :tas_maximo,
+        #:tas_maximo,
         :tas_any_alterada,
-        :tas_recuento_alterada,
-        :tas_prop_alterada,
+        #:tas_recuento_alterada,
+        #:tas_prop_alterada,
         :tas_delta_descenso,
-        :tas_delta_aumento
+        #:tas_delta_aumento
     )
     
     return df_result
@@ -87,17 +87,17 @@ function agrupar_TAD(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
             rangos_anomalos = Tuple{Float64,Float64}[(-Inf, 60),(80, Inf)]) #Rango de valores anomalos
 
     df_result = select(df_result, :id_anonim_episodio,
-        :tad_existe_valor,
+        #:tad_existe_valor,
         :tad_recuento,
         :tad_primero,
-        :tad_ultimo,
+        #:tad_ultimo,
         :tad_minimo,
-        :tad_maximo,
+        #:tad_maximo,
         :tad_any_alterada,
-        :tad_recuento_alterada,
-        :tad_prop_alterada,
+        #:tad_recuento_alterada,
+        #:tad_prop_alterada,
         :tad_delta_descenso,
-        :tad_delta_aumento
+        #:tad_delta_aumento
     )
     
     return df_result
@@ -124,17 +124,17 @@ function agrupar_temperatura(df_ctes::DataFrame, df_episodios::DataFrame) :: Dat
             rangos_anomalos = Tuple{Float64,Float64}[(-Inf, 36),(37.5, Inf)]) #Rango de valores anomalos
 
     df_result = select(df_result, :id_anonim_episodio,
-        :temp_existe_valor,
+        #:temp_existe_valor,
         :temp_recuento,
         :temp_primero,
-        :temp_ultimo,
+        #:temp_ultimo,
         :temp_minimo,
         :temp_maximo,
         :temp_any_alterada,
-        :temp_recuento_alterada,
+        #:temp_recuento_alterada,
         :temp_prop_alterada,
-        :temp_delta_descenso,
-        :temp_delta_aumento
+        #:temp_delta_descenso,
+        #:temp_delta_aumento
     )
     
     return df_result
@@ -165,14 +165,14 @@ function agrupar_diuresis24h(df_ctes::DataFrame, df_episodios::DataFrame) :: Dat
         :diuresis24h_existe_valor,
         :diuresis24h_recuento,
         :diuresis24h_primero,
-        :diuresis24h_ultimo,
+        #:diuresis24h_ultimo,
         :diuresis24h_minimo,
-        :diuresis24h_maximo,
-        :diuresis24h_any_alterada,
-        :diuresis24h_recuento_alterada,
-        :diuresis24h_prop_alterada,
+        #:diuresis24h_maximo,
+        #:diuresis24h_any_alterada,
+        #:diuresis24h_recuento_alterada,
+        #:diuresis24h_prop_alterada,
         :diuresis24h_delta_descenso,
-        :diuresis24h_delta_aumento
+        #:diuresis24h_delta_aumento
     )
     
     return df_result
@@ -198,17 +198,17 @@ function agrupar_glucemia(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFr
             rangos_anomalos = Tuple{Float64,Float64}[(-Inf, 70),(140, Inf)]) #Rango de valores anomalos
 
     df_result = select(df_result, :id_anonim_episodio,
-        :glucemia_existe_valor,
+        #:glucemia_existe_valor,
         :glucemia_recuento,
         :glucemia_primero,
-        :glucemia_ultimo,
+        #:glucemia_ultimo,
         :glucemia_minimo,
         :glucemia_maximo,
         :glucemia_any_alterada,
-        :glucemia_recuento_alterada,
-        :glucemia_prop_alterada,
-        :glucemia_delta_descenso,
-        :glucemia_delta_aumento
+        #:glucemia_recuento_alterada,
+        #:glucemia_prop_alterada,
+        #:glucemia_delta_descenso,
+        #:glucemia_delta_aumento
     )
     
     return df_result
@@ -233,17 +233,17 @@ function agrupar_shock_index(df_ctes::DataFrame, df_episodios::DataFrame) :: Dat
             :fecha_toma) 
 
     df_result = select(df_result, :id_anonim_episodio,
-        :shock_index_existe_valor,
+        #:shock_index_existe_valor,
         :shock_index_recuento,
         :shock_index_primero,
-        :shock_index_ultimo,
-        :shock_index_minimo,
+        #:shock_index_ultimo,
+        #:shock_index_minimo,
         :shock_index_maximo,
         :shock_index_any_alterada,
-        :shock_index_recuento_alterada,
-        :shock_index_prop_alterada,
-        :shock_index_delta_descenso,
-        :shock_index_delta_aumento
+        #:shock_index_recuento_alterada,
+        #:shock_index_prop_alterada,
+        #:shock_index_delta_descenso,
+        #:shock_index_delta_aumento
     )
     
     return df_result
@@ -268,17 +268,17 @@ function agrupar_ta_media(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFr
             :fecha_toma)
 
     df_result = select(df_result, :id_anonim_episodio,
-        :ta_media_existe_valor,
+        #:ta_media_existe_valor,
         :ta_media_recuento,
         :ta_media_primero,
-        :ta_media_ultimo,
+        #:ta_media_ultimo,
         :ta_media_minimo,
-        :ta_media_maximo,
-        :ta_media_any_alterada,
-        :ta_media_recuento_alterada,
-        :ta_media_prop_alterada,
-        :ta_media_delta_descenso,
-        :ta_media_delta_aumento
+        #:ta_media_maximo,
+        #:ta_media_any_alterada,
+        #:ta_media_recuento_alterada,
+        #:ta_media_prop_alterada,
+        #:ta_media_delta_descenso,
+        #:ta_media_delta_aumento
     )
     
     return df_result
@@ -302,17 +302,17 @@ function agrupar_m_shock_index(df_ctes::DataFrame, df_episodios::DataFrame) :: D
             :fecha_toma)
 
     df_result = select(df_result, :id_anonim_episodio,
-        :m_shock_index_existe_valor,
+        #:m_shock_index_existe_valor,
         :m_shock_index_recuento,
         :m_shock_index_primero,
-        :m_shock_index_ultimo,
-        :m_shock_index_minimo,
+        #:m_shock_index_ultimo,
+        #:m_shock_index_minimo,
         :m_shock_index_maximo,
         :m_shock_index_any_alterada,
-        :m_shock_index_recuento_alterada,
-        :m_shock_index_prop_alterada,
-        :m_shock_index_delta_descenso,
-        :m_shock_index_delta_aumento
+        #:m_shock_index_recuento_alterada,
+        #:m_shock_index_prop_alterada,
+        #:m_shock_index_delta_descenso,
+        #:m_shock_index_delta_aumento
     )
     
     return df_result

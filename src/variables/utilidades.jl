@@ -90,13 +90,17 @@ function agrupador_generico(
             end
 
             (
-                existe_valor=existe_valor,
-                recuento=recuento, primero=primero,
-                ultimo=ultimo, minimo=minimo,
-                maximo=maximo, any_alterada=Int(recuento_rango > 0),
-                recuento_alterada=recuento_rango,
-                prop_alterada=prop_alterada, delta_descenso=primero - minimo,
-                delta_aumento=maximo - primero
+                existe_valor = existe_valor,
+                recuento = recuento,
+                primero = primero,
+                ultimo = ultimo,
+                minimo = minimo,
+                maximo = maximo,
+                any_alterada = Int(recuento_rango > 0),
+                recuento_alterada = recuento_rango,
+                prop_alterada = prop_alterada,
+                delta_descenso = primero - minimo,
+                delta_aumento = maximo - primero
             )
 
         end) => AsTable
