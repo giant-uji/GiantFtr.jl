@@ -48,11 +48,6 @@ end
     end
 
     @testset "salidas múltiples (produce + extiende) NO debería registrar el nodo" begin
-        # ⚠️ Este test documenta el comportamiento CORRECTO, no el actual.
-        # A día de hoy `registrar!` imprime el aviso de "solo puede definir
-        # una salida" pero le falta el `return`, así que el nodo se registra
-        # igualmente. Este test FALLARÁ hasta que se añada ese `return`.
-        # Se deja aquí a propósito como test de regresión del bug.
         limpiar_registro!()
         ambigua() = DataFrame(id=[1])
         @silenciar registrar!(ambigua; produce=EPISODIOS, extiende=(TRASLADOS, :id))
@@ -182,10 +177,9 @@ end
     end
 
     @testset "anyade sobre una tabla que no existe aún lanza KeyError" begin
-        # Documenta la decisión de diseño: no hay comprobación automática,
+        # Decision de disenyo: No hay comprobación automática,
         # es responsabilidad del desarrollador declarar bien las dependencias.
-        # Este test confirma que el fallo, aunque no esté validado de forma
-        # explícita, al menos revienta (no falla en silencio con datos mal).
+        # Este test confirma que en el caso de fallo lanza error (no es silencioso)
         limpiar_registro!()
         anyade_huerfano() = DataFrame(id=[1])
         registrar!(anyade_huerfano; anyade=LABORATORIO)
