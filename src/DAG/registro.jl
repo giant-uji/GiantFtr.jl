@@ -31,6 +31,7 @@ function registrar!(
         return
     elseif salidas > 1
         println("La función $nombre solo puede definir una salida: produce, extiende o anyade.")
+        return
     end
 
     if haskey(REGISTRO, nombre)
