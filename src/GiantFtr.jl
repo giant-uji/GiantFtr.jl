@@ -43,5 +43,8 @@ include("variables/ftr_hosp_ctes/generador_id.jl")
 include("variables/ftr_hosp_ctes/basica.jl")
 include("variables/ftr_hosp_ctes/agregacion.jl")
 
+#Resultados de laboratorio
+include("variables/ftr_hosp_lab_resultados/agregacion.jl")
+
 
 end
