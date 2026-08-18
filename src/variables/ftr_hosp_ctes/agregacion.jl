@@ -1,12 +1,8 @@
 function agrupar_FC(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
     
-    df_result = agrupador_generico(df_ctes, df_episodios,
+    df_result = agrupador_generico_ctes(df_ctes, df_episodios,
             FRECUENCIA_CARDIACA, #Tipo valor
-            "fc", #Prefijo
-            :id,
-            :tipo_valor_pk,
-            :valor_campo,
-            :fecha_toma;
+            "fc"; #Prefijo
             rango_fisiologico = (40, 130), #Rango de valores compatibles con la vida
             #El tipado ES OBLIGATORIO porque Julia no transforma de Int a Float
             rangos_anomalos = Tuple{Float64,Float64}[(-Inf, 50),(100, Inf)]) #Rango de valores anomalos
@@ -38,13 +34,9 @@ registrar!(agrupar_FC;
 
 function agrupar_TAS(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
 
-    df_result = agrupador_generico(df_ctes, df_episodios,
+    df_result = agrupador_generico_ctes(df_ctes, df_episodios,
             TA_SISTOLICA, #Tipo valor
-            "tas", #Prefijo
-            :id,
-            :tipo_valor_pk,
-            :valor_campo,
-            :fecha_toma;
+            "tas"; #Prefijo
             rango_fisiologico = (80, 180), #Rango de valores compatibles con la vida
             #El tipado ES OBLIGATORIO porque Julia no transforma de Int a Float
             rangos_anomalos = Tuple{Float64,Float64}[(-Inf, 90),(120, Inf)]) #Rango de valores anomalos
@@ -76,13 +68,9 @@ registrar!(agrupar_TAS;
 
 function agrupar_TAD(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
 
-    df_result = agrupador_generico(df_ctes, df_episodios,
+    df_result = agrupador_generico_ctes(df_ctes, df_episodios,
             TA_DISTOLICA, #Tipo valor
-            "tad", #Prefijo
-            :id,
-            :tipo_valor_pk,
-            :valor_campo,
-            :fecha_toma;
+            "tad"; #Prefijo
             rango_fisiologico = (40, 110), #Rango de valores compatibles con la vida
             rangos_anomalos = Tuple{Float64,Float64}[(-Inf, 60),(80, Inf)]) #Rango de valores anomalos
 
@@ -113,13 +101,9 @@ registrar!(agrupar_TAD;
 
 function agrupar_temperatura(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
 
-    df_result = agrupador_generico(df_ctes, df_episodios,
+    df_result = agrupador_generico_ctes(df_ctes, df_episodios,
             TA_DISTOLICA, #Tipo valor
-            "temp", #Prefijo
-            :id,
-            :tipo_valor_pk,
-            :valor_campo,
-            :fecha_toma;
+            "temp"; #Prefijo
             rango_fisiologico = (34, 40), #Rango de valores compatibles con la vida
             rangos_anomalos = Tuple{Float64,Float64}[(-Inf, 36),(37.5, Inf)]) #Rango de valores anomalos
 
@@ -150,13 +134,9 @@ registrar!(agrupar_temperatura;
 
 function agrupar_diuresis24h(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
 
-    df_result = agrupador_generico(df_ctes, df_episodios,
+    df_result = agrupador_generico_ctes(df_ctes, df_episodios,
             DIURESIS24H, #Tipo valor
-            "diuresis24h",  #Prefijo
-            :id,
-            :tipo_valor_pk,
-            :valor_campo,
-            :fecha_toma)
+            "diuresis24h")  #Prefijo
             #SIN RANGO POR PETICION DE ENFERMERIA
             #(400, 3000), #Rango de valores compatibles con la vida
             #[(-Inf, 800),(2000, Inf)]) #Rango de valores anomalos
@@ -188,13 +168,9 @@ registrar!(agrupar_diuresis24h;
 
 function agrupar_glucemia(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
 
-    df_result = agrupador_generico(df_ctes, df_episodios,
+    df_result = agrupador_generico_ctes(df_ctes, df_episodios,
             GLUCEMIAS, #Tipo valor
-            "glucemia", #Prefijo
-            :id,
-            :tipo_valor_pk,
-            :valor_campo,
-            :fecha_toma;
+            "glucemia"; #Prefijo
             rangos_anomalos = Tuple{Float64,Float64}[(-Inf, 70),(140, Inf)]) #Rango de valores anomalos
 
     df_result = select(df_result, :id_anonim_episodio,
@@ -224,13 +200,10 @@ registrar!(agrupar_glucemia;
 
 function agrupar_shock_index(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
 
-    df_result = agrupador_generico(df_ctes, df_episodios,
+    df_result = agrupador_generico_ctes(df_ctes, df_episodios,
             SHOCK_INDEX, #Tipo valor
-            "shock_index", #Prefijo
-            :id,
-            :tipo_valor_pk,
-            :valor_campo,
-            :fecha_toma) 
+            "shock_index") #Prefijo
+ 
 
     df_result = select(df_result, :id_anonim_episodio,
         #:shock_index_existe_valor,
@@ -259,13 +232,9 @@ registrar!(agrupar_shock_index;
 
 function agrupar_ta_media(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
 
-    df_result = agrupador_generico(df_ctes, df_episodios,
+    df_result = agrupador_generico_ctes(df_ctes, df_episodios,
             TA_MEDIA, #Tipo valor
-            "ta_media", #Prefijo
-            :id,
-            :tipo_valor_pk,
-            :valor_campo,
-            :fecha_toma)
+            "ta_media") #Prefijo
 
     df_result = select(df_result, :id_anonim_episodio,
         #:ta_media_existe_valor,
@@ -293,13 +262,9 @@ registrar!(agrupar_ta_media;
 
 function agrupar_m_shock_index(df_ctes::DataFrame, df_episodios::DataFrame) :: DataFrame
 
-    df_result = agrupador_generico(df_ctes, df_episodios,
+    df_result = agrupador_generico_ctes(df_ctes, df_episodios,
             M_SHOCK_INDEX, #Tipo valor
-            "m_shock_index",  #Prefijo
-            :id,
-            :tipo_valor_pk,
-            :valor_campo,
-            :fecha_toma)
+            "m_shock_index")  #Prefijo
 
     df_result = select(df_result, :id_anonim_episodio,
         #:m_shock_index_existe_valor,

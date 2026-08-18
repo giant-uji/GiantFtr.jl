@@ -132,3 +132,25 @@ function agrupador_generico(
 
     return df_result
 end
+
+
+function agrupador_generico_ctes(
+    df_ctes::DataFrame,
+    df_ftr::DataFrame,
+    tipo,
+    prefijo::String;
+    rango_fisiologico::Union{Nothing,Tuple}=nothing,
+    #Vector{_} requiere ser FUERTEMENTE TIPADO, un Vector{Tuple} lanza error
+    rangos_anomalos::Union{Nothing,Vector{Tuple{Float64,Float64}}}=nothing,
+    )::DataFrame
+
+    agrupador_generico(df_ctes, df_ftr,
+            tipo,
+            prefijo, #Prefijo
+            :id,
+            :tipo_valor_pk,
+            :valor_campo,
+            :fecha_toma;
+            rango_fisiologico = rango_fisiologico,
+            rangos_anomalos = rangos_anomalos)
+end
