@@ -46,5 +46,7 @@ include("variables/ftr_hosp_ctes/agregacion.jl")
 #Resultados de laboratorio
 include("variables/ftr_hosp_lab_resultados/agregacion.jl")
 
+#VALENF
+include("variables/ftr_hosp_valenf/basica.jl")
 
 end
