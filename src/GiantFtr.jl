@@ -49,4 +49,8 @@ include("variables/ftr_hosp_lab_resultados/agregacion.jl")
 #VALENF
 include("variables/ftr_hosp_valenf/basica.jl")
 
+
+#Compuestas
+include("variables/compuestas/motivo_valenf.jl")
+
 end
