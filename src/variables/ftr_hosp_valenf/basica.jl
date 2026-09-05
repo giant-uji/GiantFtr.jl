@@ -41,3 +41,53 @@ end
 
 export orden_valenf
 registrar!(orden_valenf;dependencias = [get_ftr_hosp_valenf], usa = [VALENF], extiende = (VALENF, :id))
+
+
+function categoria_valenf_cf(df_valenf::DataFrame)::DataFrame
+    printstyled("[WARNING] categoria_valenf_cf: Enfermeria tiene que consensuar los rangos\n", color=:yellow, bold=true)
+
+    select(df_valenf,
+        :id,
+        :valor_valenf_cf => (v -> ifelse.(v .<= 34.101630, DEPENDENCIA_SEVERA,
+                                  ifelse.(v .<= 78.270630, DEPENDENCIA_MODERADA,
+                                          DEPENDENCIA_LEVE))) => :categoria_valenf_cf
+    )
+
+    #Julia hace un return de lo ultimo ejecutado
+end
+
+export categoria_valenf_cf
+registrar!(categoria_valenf_cf;dependencias = [get_ftr_hosp_valenf], usa = [VALENF], extiende = (VALENF, :id))
+
+
+function categoria_valenf_rlpp(df_valenf::DataFrame)::DataFrame
+    printstyled("[WARNING] categoria_valenf_rlpp: Enfermeria tiene que consensuar los rangos\n", color=:yellow, bold=true)
+    
+    select(df_valenf,
+        :id,
+        :valor_valenf_rlpp => (v -> ifelse.(v .> 17.42, SIN_RIESGO,
+                                  ifelse.(v .> 14.64, RIESGO_MODERADO,
+                                          RIESGO_ALTO))) => :categoria_valenf_rlpp
+    )
+
+    #Julia hace un return de lo ultimo ejecutado
+end
+
+export categoria_valenf_rlpp
+registrar!(categoria_valenf_rlpp;dependencias = [get_ftr_hosp_valenf], usa = [VALENF], extiende = (VALENF, :id))
+
+function categoria_valenf_rc(df_valenf::DataFrame)::DataFrame
+    printstyled("[WARNING] categoria_downton: Enfermeria tiene que consensuar los rangos\n", color=:yellow, bold=true)
+    
+    select(df_valenf,
+        :id,
+        :valor_valenf_rc => (v -> ifelse.(v .< 2.084, SIN_RIESGO,
+                                 ifelse.(v .< 3.46, RIESGO_MODERADO,
+                                         RIESGO_ALTO))) => :categoria_valenf_rc
+    )
+
+    #Julia hace un return de lo ultimo ejecutado
+end
+
+export categoria_valenf_rc
+registrar!(categoria_valenf_rc;dependencias = [get_ftr_hosp_valenf], usa = [VALENF], extiende = (VALENF, :id))
