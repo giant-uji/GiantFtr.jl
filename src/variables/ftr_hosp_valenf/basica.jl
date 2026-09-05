@@ -76,6 +76,7 @@ end
 export categoria_valenf_rlpp
 registrar!(categoria_valenf_rlpp;dependencias = [get_ftr_hosp_valenf], usa = [VALENF], extiende = (VALENF, :id))
 
+
 function categoria_valenf_rc(df_valenf::DataFrame)::DataFrame
     printstyled("[WARNING] categoria_downton: Enfermeria tiene que consensuar los rangos\n", color=:yellow, bold=true)
     

@@ -70,11 +70,11 @@ Cada carpeta suele contener dos ficheros principales:
 
 También pueden añadirse más ficheros para agrupar variables relacionadas o para implementar variables especialmente complejas basadas únicamente en esa tabla.
 
+Si una variable requiere información de múltiples tablas debe considerarse su ubicación en `variables/compuestas/` aunque dependerá de su complejidad.
 
 #### `variables/compuestas/`
 
-Contiene variables que utilizan información procedente de varias tablas.
-
+Contiene variables que utilizan información procedente de varias tablas o implementan lógica especialmente compleja.
 
 ## Filosofía del proyecto
 
