@@ -43,6 +43,7 @@ registrar!(get_ftr_hosp_valenf;produce = VALENF)
 function mapear_respuestas_valenf!(df::DataFrame)::DataFrame
     mapeos = Dict(
         :respuesta_pregunta1 => Dict(1=>15, 2=>10, 3=>5, 4=>0),
+        :respuesta_pregunta5 => Dict(1=>1, 2=>0),
         :respuesta_pregunta6 => Dict(1=>1, 2=>0),
         :respuesta_pregunta7 => Dict(1=>1, 2=>0),
     )
