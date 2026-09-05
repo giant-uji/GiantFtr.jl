@@ -81,3 +81,5 @@ Contiene variables que utilizan información procedente de varias tablas o imple
 La idea es que añadir una nueva variable consista únicamente en implementar su lógica y declarar de qué otras variables depende. El sistema DAG se encarga automáticamente de calcular el orden de ejecución.
 
 Esta organización permite mantener separadas las responsabilidades de preparación de datos, utilidades comunes y cálculo de variables.
+
+Se deberá procurar que los resultados sean valores exactos (con decimales). Esto viene de la precisión requerida para el entrenamiento de modelos de IA. Si en algún caso es necesario redondear una variable para visualización, eso corresponde a una capa posterior, ajena a este proyecto.

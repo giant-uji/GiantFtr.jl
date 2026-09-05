@@ -20,7 +20,7 @@ function horas_valenf_previa(df_valenf::DataFrame)::DataFrame
     sort!(valenf_mod, [:id_anonim_episodio, :fecha_valoracion])
 
     transform!(groupby(valenf_mod, :id_anonim_episodio),
-    :fecha_valoracion => (x -> [missing; Int.(ceil.(Dates.value.(diff(x)) ./ 3_600_000))]) => :horas_valenf_previa)
+    :fecha_valoracion => (x -> [missing; Dates.value.(diff(x)) ./ 3_600_000]) => :horas_valenf_previa)
 
     return select(valenf_mod, :id, :horas_valenf_previa)
 end
